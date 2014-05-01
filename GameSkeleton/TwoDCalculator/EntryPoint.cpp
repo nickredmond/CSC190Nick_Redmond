@@ -27,16 +27,16 @@ void dotProductCallback(const DotProductData& data){
 	vec2 = Vector2(data.v2i, data.v2j);
 
 	if (data.projectOntoLeftVector){
-		float projScalar = dotProduct(vec1, vec2) / vec2.lengthSquared();
-		projectionVec = projScalar * vec2;
-
-		rejectionVec = vec1 - projectionVec;
-	}
-	else{
 		float projScalar = dotProduct(vec2, vec1) / vec1.lengthSquared();
 		projectionVec = projScalar * vec1;
 
 		rejectionVec = vec2 - projectionVec;
+	}
+	else{
+		float projScalar = dotProduct(vec1, vec2) / vec2.lengthSquared();
+		projectionVec = projScalar * vec2;
+
+		rejectionVec = vec1 - projectionVec;
 	}
 }
 
