@@ -17,7 +17,7 @@ public:
 	static const int KEY_ESCAPE	= VK_ESCAPE;
 	static const int BUTTON_LEFT	= VK_LBUTTON;
 	static const int BUTTON_RIGHT	= VK_RBUTTON;
-
+	
 	static bool IsPressed( int key );
 	static void GetMousePos( int& x, int& y );
 	static int GetMouseX();

@@ -1,8 +1,7 @@
-#include <iostream>
-#include <math.h>
+#ifndef VECTOR_H
+#define VECTOR_H
 
-using std::cout;
-using std::endl;
+#include <math.h>
 
 struct Vector2{
 public:
@@ -15,6 +14,7 @@ public:
 
 	float dotProduct(const Vector2 &right){
 		float result = (x * right.x) + (y * right.y);
+		return result;
 	}
 
 	float length(){
@@ -86,10 +86,10 @@ Vector2 operator/(const Vector2 &left, const float scalar){
 	return result;
 }
 
-std::ostream& operator<<(std::ostream &stream, const Vector2 vec){
-	cout << "{ " << vec.x << ", " << vec.y << " }" << endl;
-	return stream;
-}
+//std::ostream& operator<<(std::ostream &stream, const Vector2 vec){
+//	cout << "{ " << vec.x << ", " << vec.y << " }" << endl;
+//	return stream;
+//}
 
 //-- functions --//
 
@@ -104,3 +104,10 @@ Vector2 LERP(Vector2 first, Vector2 second, float beta){
 float dotProduct(Vector2 &left, Vector2 &right){
 	return (left.x * right.x) + (left.y * right.y);
 }
+
+float distance(Vector2 &v1, Vector2 &v2){
+	float discriminant = pow(v2.x - v1.x, 2) + pow(v2.y - v1.y, 2);
+	return sqrt(discriminant);
+}
+
+#endif
