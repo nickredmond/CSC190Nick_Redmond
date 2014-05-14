@@ -34,7 +34,8 @@ topRight, roofTop
 int numLines = sizeof(lines) / (sizeof(*lines) * 2);
 
 Matrix3 matrices[10];
-float currentTransform[9];
+// float currentTransform[9];
+Matrix3 currentTransform;
 
 void basicVectorEqCallback(const BasicVectorEquationInfo& data){
 	left = data.scalar1 * Vector2(data.x1, data.y1);
@@ -96,15 +97,17 @@ void matrix2TransformCallback(const MatrixTransformData2D& data){
 		result = result * matrices[i];
 	}
 
-	currentTransform[0] = result.col1.x;
-	currentTransform[1] = result.col2.x;
-	currentTransform[2] = result.col3.x;
-	currentTransform[3] = result.col1.y;
-	currentTransform[4] = result.col2.y;
-	currentTransform[5] = result.col3.y;
-	currentTransform[6] = 0;
-	currentTransform[7] = 0;
-	currentTransform[8] = 1;
+	currentTransform = result;
+
+	//currentTransform[0] = result.col1.x;
+	//currentTransform[1] = result.col2.x;
+	//currentTransform[2] = result.col3.x;
+	//currentTransform[3] = result.col1.y;
+	//currentTransform[4] = result.col2.y;
+	//currentTransform[5] = result.col3.y;
+	//currentTransform[6] = 0;
+	//currentTransform[7] = 0;
+	//currentTransform[8] = 1;
 }
 
 void linearTransCallback(const LinearTransformationData& data){
@@ -158,7 +161,7 @@ int main(int argc, char* argv[])
 	renderUI.setLerpData(&aVector.x, &bVector.x, &aMinusB.x, &aVectorLerp.x, &bVectorLerp.x, &lerpResult.x, lerpCallback);
 	renderUI.setLinearTransformationData(&linearResult.x, linearTransCallback);
 	renderUI.setAffineTransformationData(&results[0], affineTransCallback);
-	renderUI.set2DMatrixVerticesTransformData(&lines[0].x, numLines, &matrices[0].col1.x, &currentTransform[0], matrix2TransformCallback);
+	renderUI.set2DMatrixVerticesTransformData(&lines[0].x, numLines, &matrices[0].data[0], &currentTransform.data[0], matrix2TransformCallback);
 
 	if( ! renderUI.initialize(argc, argv))
 		return -1;
