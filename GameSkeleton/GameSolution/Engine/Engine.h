@@ -8,7 +8,7 @@ namespace Engine
 {
 	// your stuff goes here...
 	// use ENGINE_SHARED to indicate a function or class that you want to export
-	//ENGINE_SHARED void Init();
+	ENGINE_SHARED void Init();
 
 	//ENGINE_SHARED bool sampleFunctionThatReturnsTrue();
 }

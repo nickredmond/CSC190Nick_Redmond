@@ -42,6 +42,8 @@ public:
 	Vector2 perpCCW(){
 		return Vector2(-y,x);
 	}
+
+	float* operator*(){return &x;}
 };
 
 //-- operators --//
