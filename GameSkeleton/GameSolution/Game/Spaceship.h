@@ -5,8 +5,6 @@
 #include "Vector2.h"
 #include "MoveablleObject.h"
 
-const float ACCELERATION = 8.0f;
-
 class Spaceship : public MoveableObject{
 private: 
 	struct Vector2 right, bottomRight, bottom, bottomLeft, left;
@@ -17,39 +15,54 @@ public:
 		_width = width;
 		_height = height;
 
+		numLines = 6;
+		lines = new Vector2[numLines];
+
 		SetPosition(Vector2(0, 0));
 	}
+	//void Draw(Core::Graphics& graphics){
+	//	graphics.DrawLine(position.x, position.y, right.x, right.y);
+	//	graphics.DrawLine(right.x, right.y, bottomRight.x, bottomRight.y);
+	//	graphics.DrawLine(bottomRight.x, bottomRight.y, bottom.x, bottom.y);
+	//	graphics.DrawLine(bottom.x, bottom.y, bottomLeft.x, bottomLeft.y);
+	//	graphics.DrawLine(bottomLeft.x, bottomLeft.y, left.x, left.y);
+	//	graphics.DrawLine(left.x, left.y, position.x, position.y);
+	//}
+
 	void Draw(Core::Graphics& graphics){
-		graphics.DrawLine(position.x, position.y, right.x, right.y);
-		graphics.DrawLine(right.x, right.y, bottomRight.x, bottomRight.y);
-		graphics.DrawLine(bottomRight.x, bottomRight.y, bottom.x, bottom.y);
-		graphics.DrawLine(bottom.x, bottom.y, bottomLeft.x, bottomLeft.y);
-		graphics.DrawLine(bottomLeft.x, bottomLeft.y, left.x, left.y);
-		graphics.DrawLine(left.x, left.y, position.x, position.y);
+		Vector2 translation = Vector2(position.x, position.y); //(velocity * prev_dt);
+		Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
+
+		DrawObj(graphics, transform);
 	}
 
 	void SetPosition(Vector2 pos){
+		position.x = 0;
+		position.y = 0;
+
+		lines[0].x = position.x;
+		lines[0].y = position.y;
+		lines[1].x = position.x + (float(_width) / 2);
+		lines[1].y = position.y + (0.33f * _height);
+		lines[2].x = position.x + (float(_width) / 4);
+		lines[2].y = position.y + _height;
+		lines[3].x = position.x;
+		lines[3].y = position.y + (0.67f * _height);
+		lines[4].x = position.x - (float(_width) / 4);
+		lines[4].y = position.y + _height;
+		lines[5].x = position.x - (float(_width) / 2);
+		lines[5].y = position.y + (0.33f * _height);
+
 		position.x = pos.x;
 		position.y = pos.y;
-
-		right.x = position.x + (_width / 2);
-		right.y = position.y + (0.33f * _height);
-		bottomRight.x = position.x + (_width / 4);
-		bottomRight.y = position.y + (0.67f * _height);
-		bottom.x = position.x;
-		bottom.y = position.y + _height;
-		left.x = position.x - (_width / 2);
-		left.y = position.y + (0.33f * _height);
-		bottomLeft.x = position.x - (_width / 4);
-		bottomLeft.y = position.y + (0.67f * _height);
 	}
 
 	void UpdatePosition(float xVelDelta, float yVelDelta, float dt){
 		velocity.x += xVelDelta;
 		velocity.y += yVelDelta;
 
-		Vector2 newPos = position + (velocity * dt);
-		SetPosition(newPos);
+		Vector2 newpos = position + (velocity * dt);
+		SetPosition(newpos);
 	}
 };
 

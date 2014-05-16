@@ -2,8 +2,6 @@
 #include "Wall.h"
 #include "Asteroid.h"
 
-#include <string.h>
-
 using Core::Input;
 using namespace Obstacles;
 
@@ -171,6 +169,7 @@ void UpdateShipBehavior(){
 bool Update(float dt){
 	dt;
 	UpdateShipBehavior();
+	ship.prev_dt = dt;
 	UpdateShipPosition(ship, dt);
 	shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
 

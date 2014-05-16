@@ -23,6 +23,12 @@ namespace Core
 	CORE_SHARED void RegisterUpdateFn(UpdateFn* _udpate);
 	CORE_SHARED void RegisterDrawFn(DrawFn* _draw);
 	CORE_SHARED void GameLoop();
+
+	//void DrawValue( Core::Graphics& graphics, int x, int y, float num ) {
+	//	stringstream ss;
+	//	ss << num;
+	//	graphics.DrawString( x, y, ss.str().c_str());
+	//}	
 }
 
 #endif // CORE_H
