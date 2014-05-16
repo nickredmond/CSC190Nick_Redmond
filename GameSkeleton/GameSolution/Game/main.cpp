@@ -1,7 +1,8 @@
 #include "Spaceship.h"
 #include "Wall.h"
 #include "Asteroid.h"
-
+#include <sstream>
+using std::stringstream;
 using Core::Input;
 using namespace Obstacles;
 
@@ -35,40 +36,88 @@ bool IsOffBottom(Vector2 position, Spaceship& ship, int screenHeight){
 void UpdateShipPosition(Spaceship& ship, float dt){
 	//Wall w = walls[0];
 
-	float xVelInc = 0;
-	float yVelInc = 0;
+	//float xVelInc = 0;
+	//float yVelInc = 0;
 
-	if (Input::IsPressed(Input::KEY_LEFT)){
-		xVelInc = -ACCELERATION;
+	//if (Input::IsPressed('Q')){
+	//	xVelInc = -ACCELERATION;
+	//}
+	//else if (Input::IsPressed('E')){
+	//	xVelInc = ACCELERATION;
+	//}
+	//else{
+	//	if (ship.GetVelocity().x > 0){
+	//		xVelInc = -ACCELERATION / 2;
+	//	}
+	//	else if (ship.GetVelocity().x < 0){
+	//		xVelInc = ACCELERATION / 2;
+	//	}
+	//}
+
+	//if (Input::IsPressed(Input::KEY_UP)){
+	//	yVelInc = -ACCELERATION;
+	//}
+	//else if (Input::IsPressed(Input::KEY_DOWN)){
+	//	yVelInc = ACCELERATION;
+	//}
+	//else{
+	//	if (ship.GetVelocity().y > 0){
+	//		yVelInc = -ACCELERATION / 2;
+	//	}
+	//	else if (ship.GetVelocity().y < 0){
+	//		yVelInc = ACCELERATION / 2;
+	//	}
+	//}
+
+	Vector2 velocity = ship.GetVelocity();
+
+	//float x = 0;
+	//Matrix3 rotation = Matrix3::Rotation(ship.angle);
+	//Vector2 accelVec = Vector2(0, ACCELERATION);
+	//Vector2 velIncrease = rotation * accelVec;
+	//Vector2 idk = ship.GetVelocity() + velIncrease;
+
+	if (Input::IsPressed('A')){
+		ship.angle += ship.omega;
 	}
-	else if (Input::IsPressed(Input::KEY_RIGHT)){
-		xVelInc = ACCELERATION;
+	if (Input::IsPressed('D')){
+		ship.angle -= ship.omega;
+	}
+
+	if (Input::IsPressed('W')){
+		Vector2 deltaVel = (Matrix3::Rotation(ship.angle + 3.14159265f) * Vector2(0, ACCELERATION));
+		velocity.x -= deltaVel.x;
+		velocity.y += deltaVel.y;
+	}
+	else if (Input::IsPressed('S')){
+		Vector2 deltaVel = (Matrix3::Rotation(ship.angle) * Vector2(0, ACCELERATION));
+		velocity.x -= deltaVel.x;
+		velocity.y += deltaVel.y;
 	}
 	else{
+		float xVelInc = 0.0f;
+		float yVelInc = 0.0f;
+
+		if (ship.GetVelocity().y > 0){
+			yVelInc = -ACCELERATION / 2;
+		}
+		else if (ship.GetVelocity().y < 0){
+			yVelInc = ACCELERATION / 2;
+		} //if (velocity.x != 0 || velocity.y) velocity = velocity + (Matrix3::Rotation(ship.angle + 3.14159265f) * Vector2(0, ACCELERATION / 2));
 		if (ship.GetVelocity().x > 0){
 			xVelInc = -ACCELERATION / 2;
 		}
 		else if (ship.GetVelocity().x < 0){
 			xVelInc = ACCELERATION / 2;
 		}
+
+		velocity = velocity + Vector2(xVelInc, yVelInc);
 	}
 
-		if (Input::IsPressed(Input::KEY_UP)){
-		yVelInc = -ACCELERATION;
-	}
-	else if (Input::IsPressed(Input::KEY_DOWN)){
-		yVelInc = ACCELERATION;
-	}
-	else{
-		if (ship.GetVelocity().y > 0){
-			yVelInc = -ACCELERATION / 2;
-		}
-		else if (ship.GetVelocity().y < 0){
-			yVelInc = ACCELERATION / 2;
-		}
-	}
+	ship.SetVelocity(velocity.x, velocity.y);
 
-	ship.UpdatePosition(xVelInc, yVelInc, dt);
+	Vector2 newpos = ship.GetPosition() + (velocity * dt);
+	ship.SetPosition(newpos);
 }
 
 void Update_ScreenWrap(Spaceship& ship, int screenWidth, int screenHeight, float dt){
@@ -193,6 +242,7 @@ void Draw(Core::Graphics& graphics){
 
 int main()
 {
+	stringstream s;
 	asteroid.SetVelocity(100.2f, 100.2f);
 	ship.SetPosition(Vector2(400, 400));
 
@@ -204,3 +254,4 @@ int main()
 	Core::RegisterDrawFn(Draw);
 	Core::GameLoop();
 }
+

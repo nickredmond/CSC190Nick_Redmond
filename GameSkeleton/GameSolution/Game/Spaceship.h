@@ -41,29 +41,29 @@ public:
 		position.y = 0;
 
 		lines[0].x = position.x;
-		lines[0].y = position.y;
+		lines[0].y = position.y - (float(_height) / 2);
 		lines[1].x = position.x + (float(_width) / 2);
-		lines[1].y = position.y + (0.33f * _height);
+		lines[1].y = position.y;
 		lines[2].x = position.x + (float(_width) / 4);
-		lines[2].y = position.y + _height;
+		lines[2].y = position.y + (0.67f * _height);
 		lines[3].x = position.x;
-		lines[3].y = position.y + (0.67f * _height);
+		lines[3].y = position.y + (0.33f * _height); 
 		lines[4].x = position.x - (float(_width) / 4);
-		lines[4].y = position.y + _height;
+		lines[4].y = position.y + (0.67f * _height);
 		lines[5].x = position.x - (float(_width) / 2);
-		lines[5].y = position.y + (0.33f * _height);
+		lines[5].y = position.y;
 
 		position.x = pos.x;
 		position.y = pos.y;
 	}
 
-	void UpdatePosition(float xVelDelta, float yVelDelta, float dt){
-		velocity.x += xVelDelta;
-		velocity.y += yVelDelta;
+	//void UpdatePosition(float xVelDelta, float yVelDelta, float dt){
+	//	velocity.x += xVelDelta;
+	//	velocity.y += yVelDelta;
 
-		Vector2 newpos = position + (velocity * dt);
-		SetPosition(newpos);
-	}
+	//	Vector2 newpos = position + (velocity * dt);
+	//	SetPosition(newpos);
+	//}
 };
 
 #endif

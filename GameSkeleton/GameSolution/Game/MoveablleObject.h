@@ -12,7 +12,11 @@ protected:
 	Vector2* lines;
 	int numLines;
 public:
-	float angle, prev_dt;
+	float angle, prev_dt, omega;
+
+	MoveableObject(){
+		omega = 0.05f;
+	}
 
 	void SetVelocity(float xVel, float yVel){
 		velocity.x = xVel;
