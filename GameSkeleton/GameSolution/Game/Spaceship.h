@@ -25,7 +25,7 @@ public:
 		SetPosition(Vector2(0, 0), Vector2(0, 0), 0.0f);
 
 		single = Turret(10, "Single Shot", 10, 100, 10, 5);
-		triple = Turret(10, "Triple Shot", 5, 15, 5, 2);
+		triple = Turret(10, "Triple Shot", 5, 50, 5, 2);
 		laser = Turret(10, "Laser", 20, 100, 20, 1.5f);
 
 		gun = single;

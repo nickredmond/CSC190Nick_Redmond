@@ -3,6 +3,7 @@
 #include "Asteroid.h"
 #include "Debug.h"
 #include "HierarchialTransform.h"
+#include "Utils.h"
 
 using Core::Input;
 using namespace Obstacles;
@@ -249,6 +250,8 @@ bool Update(float dt){
 		bgObjects[i].Update(dt);
 	}
 
+	Utils::Controls::Update();
+
 	wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
 	return (Input::IsPressed(Input::KEY_ESCAPE));
 }
@@ -277,6 +280,8 @@ void Draw(Core::Graphics& graphics){
 	ship.Draw(graphics);
 	Obstacles::DrawWalls(graphics);
 	asteroid.Draw(graphics);
+
+	Utils::Controls::Draw(300, 230, graphics);
 
 	for (int i = 0; i <= MAX_BULLET_INDEX; i++){
 		if (bullets[i].isVisible){
