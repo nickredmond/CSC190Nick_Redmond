@@ -256,10 +256,10 @@ bool Update(float dt){
 void Draw(Core::Graphics& graphics){
 	graphics.SetColor(defaultColor);
 
-	graphics.DrawString(470, 450, "Cycle ship collision modes with [F1, F2, F3]");
-	graphics.DrawString(480, 470, updateBehaviorTitle);
-	graphics.DrawString(470, 490, "Cycle weaponse with [1, 2, 3]");
-	graphics.DrawString(480, 510, currentWeaponTitle);
+	graphics.DrawString(250, 30, "Cycle ship collision modes with [F1, F2, F3]");
+	graphics.DrawString(260, 50, updateBehaviorTitle);
+	graphics.DrawString(250, 70, "Cycle weaponse with [1, 2, 3]");
+	graphics.DrawString(260, 90, currentWeaponTitle);
 
 	ship.Draw(graphics);
 	Obstacles::DrawWalls(graphics);

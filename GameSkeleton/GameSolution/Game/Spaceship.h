@@ -5,6 +5,7 @@
 #include "Vector2.h"
 #include "MoveablleObject.h"
 #include "Turret.h"
+#include "Debug.h"
 
 class Spaceship : public MoveableObject{
 private: 
@@ -45,6 +46,8 @@ public:
 		Vector2 translation = Vector2(position.x, position.y); //(velocity * prev_dt);
 		Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
 
+		Debug::DrawMatrix(300, 550, graphics, transform);
+
 		DrawObj(graphics, transform);
 		gun.Draw(graphics);
 	}
@@ -71,14 +74,6 @@ public:
 
 		gun.Update(position, mousePos, dt);
 	}
-
-	//void UpdatePosition(float xVelDelta, float yVelDelta, float dt){
-	//	velocity.x += xVelDelta;
-	//	velocity.y += yVelDelta;
-
-	//	Vector2 newpos = position + (velocity * dt);
-	//	SetPosition(newpos);
-	//}
 };
 
 #endif

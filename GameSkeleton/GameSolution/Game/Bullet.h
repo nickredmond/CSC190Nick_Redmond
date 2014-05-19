@@ -33,11 +33,11 @@ private:
 		lines[0].x = position.x;
 		lines[0].y = position.y;
 		lines[1].x = position.x;
-		lines[1].y = position.y + 10;
+		lines[1].y = position.y + 12;
 		lines[2].x = position.x;
 		lines[2].y = position.y;
 		lines[3].x = position.x;
-		lines[3].y = position.y + 10; 
+		lines[3].y = position.y + 12; 
 
 		position.x = pos.x;
 		position.y = pos.y;
