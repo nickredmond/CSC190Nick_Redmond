@@ -4,10 +4,12 @@
 #include "Engine.h"
 #include "Vector2.h"
 #include "MoveablleObject.h"
+#include "Turret.h"
 
 class Spaceship : public MoveableObject{
 private: 
 	struct Vector2 right, bottomRight, bottom, bottomLeft, left;
+	Turret gun;
 public:
 	int _width, _height;
 
@@ -18,8 +20,18 @@ public:
 		numLines = 6;
 		lines = new Vector2[numLines];
 
-		SetPosition(Vector2(0, 0));
+		SetPosition(Vector2(0, 0), Vector2(0, 0), 0.0f);
+
+		gun = Turret(10, "Single Shot", 10, 100, 10, 1000);
 	}
+
+	void SetTurret(char* name){
+		gun = Turret(10, name, 10, 100, 10, 1000);
+	}
+	Turret GetTurret(){
+		return gun;
+	}
+
 	//void Draw(Core::Graphics& graphics){
 	//	graphics.DrawLine(position.x, position.y, right.x, right.y);
 	//	graphics.DrawLine(right.x, right.y, bottomRight.x, bottomRight.y);
@@ -34,9 +46,10 @@ public:
 		Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
 
 		DrawObj(graphics, transform);
+		gun.Draw(graphics);
 	}
 
-	void SetPosition(Vector2 pos){
+	void SetPosition(Vector2 pos, Vector2 mousePos, float dt){
 		position.x = 0;
 		position.y = 0;
 
@@ -55,6 +68,8 @@ public:
 
 		position.x = pos.x;
 		position.y = pos.y;
+
+		gun.Update(position, mousePos, dt);
 	}
 
 	//void UpdatePosition(float xVelDelta, float yVelDelta, float dt){

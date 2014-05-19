@@ -1,3 +1,6 @@
+#ifndef MATRIX3_H
+#define MATRIX3_H
+
 #include "Vector2.h"
 #include <math.h>
 
@@ -94,8 +97,8 @@ public:
 		//matrix.col3.y += y;
 
 		Matrix3 matrix = Matrix3(Vector2(data[0], data[3]), Vector2(data[1], data[4]));
-		matrix.data[2] += x;
-		matrix.data[5] += y;
+		matrix.data[2] = data[2] + x;
+		matrix.data[5] = data[5] + y;
 
 		return matrix;
 	}
@@ -142,3 +145,5 @@ Vector2 operator*(const Matrix3 &left, const Vector2 &right){
 
 	return Vector2(x, y);
 }
+
+#endif

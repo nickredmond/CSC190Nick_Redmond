@@ -1,0 +1,20 @@
+﻿Build started 5/11/2014 4:00:27 PM.
+     1>Project "C:\Users\nredmond\Documents\C Plus Plus\Repository\GameSkeleton\GameSolution\Test\Test.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /I"C:\Users\nredmond\Documents\C Plus Plus\Repository\GameSkeleton\GameSolution\\Engine" /I"C:\Users\nredmond\Documents\C Plus Plus\Repository\GameSkeleton\GameSolution\gtest" /ZI /nologo /W4 /WX /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _VARIADIC_MAX=10_UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt "..\gtest\src\gtest-all.cc" SampleTest.cpp main.cpp
+         main.cpp
+     1>c:\users\nredmond\documents\c plus plus\repository\gameskeleton\gamesolution\engine\core.h(10): fatal error C1083: Cannot open include file: 'graphics.h': No such file or directory
+         SampleTest.cpp
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(399): error C2059: syntax error : 'bad suffix on number'
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(399): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(400): fatal error C1189: #error :  _VARIADIC_MAX must be between 5 and 10, inclusive
+         gtest-all.cc
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(399): error C2059: syntax error : 'bad suffix on number'
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(399): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+     1>c:\program files (x86)\microsoft visual studio 11.0\vc\include\xstddef(400): fatal error C1189: #error :  _VARIADIC_MAX must be between 5 and 10, inclusive
+         Generating Code...
+     1>Done Building Project "C:\Users\nredmond\Documents\C Plus Plus\Repository\GameSkeleton\GameSolution\Test\Test.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:00.81

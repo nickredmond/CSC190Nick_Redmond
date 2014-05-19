@@ -9,8 +9,8 @@
 
 
 #include "window.h"
-#include "input.h"
 #include "graphics.h"
+#include "Input.h"
 
 namespace Core
 {

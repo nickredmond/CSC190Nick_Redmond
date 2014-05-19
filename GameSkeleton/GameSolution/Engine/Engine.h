@@ -2,7 +2,6 @@
 #define _ENGINE_H_
 
 #include "ExportHeader.h"
-#include "Core.h"
 
 namespace Engine
 {
@@ -10,7 +9,7 @@ namespace Engine
 	// use ENGINE_SHARED to indicate a function or class that you want to export
 	ENGINE_SHARED void Init();
 
-	//ENGINE_SHARED bool sampleFunctionThatReturnsTrue();
+	ENGINE_SHARED bool sampleFunctionThatReturnsTrue();
 }
 
 #endif // _ENGINE_H_
