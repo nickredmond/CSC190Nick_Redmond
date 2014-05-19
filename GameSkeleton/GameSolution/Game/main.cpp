@@ -74,7 +74,7 @@ void UpdateShipPosition(Spaceship& ship, float dt){
 		}
 		else if (ship.GetVelocity().y < 0){
 			yVelInc = ACCELERATION / 2;
-		} //if (velocity.x != 0 || velocity.y) velocity = velocity + (Matrix3::Rotation(ship.angle + 3.14159265f) * Vector2(0, ACCELERATION / 2));
+		}
 		if (ship.GetVelocity().x > 0){
 			xVelInc = -ACCELERATION / 2;
 		}
@@ -93,7 +93,7 @@ void UpdateShipPosition(Spaceship& ship, float dt){
 	Vector2 newpos = ship.GetPosition() + (velocity * dt);
 	ship.SetPosition(newpos, Vector2(float(x), float(y)), dt);
 
-	if (Input::IsPressed(Input::BUTTON_LEFT) && !wasMousePressed){
+	if (Input::IsPressed(Input::BUTTON_LEFT) && !wasMousePressed && !ship.GetTurret().isReloading && ship.GetTurret().CanFire()){
 		Bullet* newBullets = ship.GetTurret().Fire();
 
 		for (int i = 0; i < ship.GetTurret().GetBulletsPerShot(); i++){
@@ -260,6 +260,19 @@ void Draw(Core::Graphics& graphics){
 	graphics.DrawString(260, 50, updateBehaviorTitle);
 	graphics.DrawString(250, 70, "Cycle weaponse with [1, 2, 3]");
 	graphics.DrawString(260, 90, currentWeaponTitle);
+
+	Turret gun = ship.GetTurret();
+	if (gun.isReloading){
+		graphics.DrawString(260, 110, "[Reloading:");
+		Debug::DrawValue(graphics, 350, 110, Debug::Debug_RoundValue(gun.reloadPercent * 100));
+		graphics.DrawString(400, 110, "%]");
+	}
+	else{
+		graphics.DrawString(260, 110, "AMMO:");
+		Debug::DrawValue(graphics, 300, 110, float(gun.GetMagazineAmmo()));
+		graphics.DrawString(320, 110, "/");
+		Debug::DrawValue(graphics, 335, 110, float(gun.GetTotalAmmo()));
+	}
 
 	ship.Draw(graphics);
 	Obstacles::DrawWalls(graphics);
