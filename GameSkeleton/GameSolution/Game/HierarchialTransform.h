@@ -1,6 +1,7 @@
-#include "Core.h"
+#ifndef HIER_H
+#define HIER_H
+
 #include "Vector2.h"
-#include "Matrix3.h"
 #include "MoveablleObject.h"
 
 const float ROT_VEL = 0.45f;
@@ -147,3 +148,5 @@ public:
 		DrawShape(graphics, 1, transform, 1.0f, 0);
 	}
 };
+
+#endif

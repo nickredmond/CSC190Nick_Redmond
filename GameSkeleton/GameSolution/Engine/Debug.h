@@ -22,6 +22,12 @@ namespace Debug{
 		graphics.DrawString( x, y, ss.str().c_str());
 	}
 
+	void DrawValue( Core::Graphics& graphics, int x, int y, int num ) {
+		stringstream ss;
+		ss << num;
+		graphics.DrawString( x, y, ss.str().c_str());
+	}
+
 	void DrawMatrix(int xPos, int yPos, Core::Graphics& graphics, Matrix3 matrix){
 		int perRowPixels = 15;
 		int perColPixels = 50;

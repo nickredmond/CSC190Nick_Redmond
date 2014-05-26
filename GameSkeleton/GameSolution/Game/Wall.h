@@ -1,4 +1,7 @@
-#include "Vector2.h"
+#ifndef WALL_H
+#define WALL_H
+
+#include "Spaceship.h"
 
 namespace Obstacles
 {
@@ -76,3 +79,5 @@ namespace Obstacles
 		ship.SetVelocity(newVelocity.x, newVelocity.y);
 	}
 }
+
+#endif

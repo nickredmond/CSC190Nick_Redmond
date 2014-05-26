@@ -1,11 +1,9 @@
 #ifndef SPACESHIP_H
 #define SPACESHIP_H
 
-#include "Engine.h"
-#include "Vector2.h"
-#include "MoveablleObject.h"
 #include "Turret.h"
-#include "Debug.h"
+
+using Core::Input;
 
 class Spaceship : public MoveableObject{
 private: 
@@ -87,6 +85,19 @@ public:
 		position.y = pos.y;
 
 		gun.Update(position, mousePos, dt);
+	}
+
+	bool IsOffRight(int screenWidth){
+		return ((position.x + (_width / 2) > screenWidth) && velocity.x > 0);
+	}
+	bool IsOffLeft(){
+		return ((position.x - (_width / 2) < 0) && velocity.x < 0);
+	}
+	bool IsOffTop(){
+		return ((position.y < 0) && velocity.y < 0);
+	}
+	bool IsOffBottom(int screenHeight){
+		return ((position.y + (_height / 2) > screenHeight) && velocity.y > 0);
 	}
 };
 

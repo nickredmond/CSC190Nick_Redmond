@@ -1,3 +1,6 @@
+#ifndef ASTEROID_H
+#define ASTEROID_H
+
 #include "MoveablleObject.h"
 #include "Vector2.h"
 #include "Core.h"
@@ -63,3 +66,5 @@ public:
 		SetPosition(currentPos);
 	}
 };
+
+#endif

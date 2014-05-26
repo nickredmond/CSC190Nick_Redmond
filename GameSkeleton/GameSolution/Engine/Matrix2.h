@@ -1,3 +1,6 @@
+#ifndef MATRIX2_H
+#define MATRIX2_H
+
 #include "Vector2.h"
 #include <math.h>
 
@@ -49,3 +52,5 @@ Vector2 operator*(const Matrix2 &left, const Vector2 &right){
 
 	return Vector2(x, y);
 }
+
+#endif

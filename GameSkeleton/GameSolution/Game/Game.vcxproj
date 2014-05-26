@@ -87,16 +87,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Spaceship.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Asteroid.h" />
+    <ClInclude Include="BubbleEffect.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="ExplosionEffect.h" />
     <ClInclude Include="HierarchialTransform.h" />
     <ClInclude Include="MoveablleObject.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleEffect.h" />
+    <ClInclude Include="ParticleManager.h" />
     <ClInclude Include="Spaceship.h" />
     <ClInclude Include="Turret.h" />
+    <ClInclude Include="UpdateFunctions.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Wall.h" />
   </ItemGroup>
