@@ -7,10 +7,13 @@
 const float MIN_LIFETIME = 0.0f;
 const float MAX_LIFETIME = 3.0f;
 
+const float MIN_R_DEFAULT = 1.5f;
+const float MAX_R_DEFAULT = 15.0f;
+
 class BubbleEffect : public ParticleEffect{
 private:
 	Vector2 position;
-	float minVelocity, maxVelocity, _angle, _variance;
+	float minVelocity, maxVelocity, _angle, _variance, minRadius, maxRadius;
 	bool _isThrusting;
 	// (2 PI) / (2 PI r)
 
@@ -30,13 +33,16 @@ private:
 	}
 public:
 	BubbleEffect(float dragCoeff, float decceleration, ColorChangeType type,
-		Vector2 startPos, float variance, float angle, float minVel, float maxVel, int numberOfParticles = 1000)
+		Vector2 startPos, float variance, float angle, float minVel, float maxVel, float minR = MIN_R_DEFAULT, float maxR = MAX_R_DEFAULT, int numberOfParticles = 1000)
 		: ParticleEffect(dragCoeff, decceleration, type, numberOfParticles){
 			position = startPos;
 			minVelocity = minVel;
 			maxVelocity = maxVel;
 			_angle = angle;
 			_variance = variance;
+
+			minRadius = minR;
+			maxRadius = maxR;
 
 			//for (int i = 0; i < numParticles; i++){
 			//	Vector2 velocity = Utils::randomInRange(minVel, maxVel) * Utils::randomUnitVector(angle, variance);
@@ -93,7 +99,7 @@ public:
 				float LIFETIME = Utils::randomInRange(MIN_LIFETIME, MAX_LIFETIME);
 
 				particles[i] = Particle(position, velocity, LIFETIME, colorChange);
-				particles[i].radius = Utils::randomInRange(1.5f, 15.0f);
+				particles[i].radius = Utils::randomInRange(minRadius, maxRadius);
 			}
 		}
 

@@ -6,6 +6,7 @@
 #include "ExplosionEffect.h"
 #include "BubbleEffect.h"
 #include "ParticleManager.h"
+#include "StarryNight.h"
 
 using Core::Input;
 using namespace Obstacles;
@@ -20,6 +21,7 @@ Asteroid asteroid(Vector2(50, 30));
 //		Vector2(300, 300), 2.0f, 12.0f, 500);
 
 ParticleManager manager;
+StarryNight bgStars(SCREEN_WIDTH, SCREEN_HEIGHT, 100, 0.5f);
 
 Core::RGB defaultColor = RGB(255, 255, 255);
 Spaceship ship(20, 20);
@@ -34,7 +36,7 @@ bool Update(float dt){
 
 	if (isCollision){
 		ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
-			ship.GetPosition(), 1.0f, 10.0f, 200);
+			ship.GetPosition(), 1.0f, 10.0f, 215);
 		manager.AddEffect(explosion);
 	}
 
@@ -49,6 +51,7 @@ bool Update(float dt){
 	}
 
 	manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
+	bgStars.Update(dt);
 
 	Utils::Controls::Update();
 
@@ -97,6 +100,7 @@ void Draw(Core::Graphics& graphics){
 	else Utils::BackgroundObjects::Draw(graphics);
 
 	manager.Draw(graphics);
+	bgStars.Draw(graphics);
 }
 
 int main()
@@ -104,8 +108,8 @@ int main()
 	asteroid.SetVelocity(100.2f, 100.2f);
 	ship.SetPosition(Vector2(400, 400), Vector2(float(Input::GetMouseX()), float(Input::GetMouseY())), 0.0f);
 
-	BubbleEffect* bubbles = new BubbleEffect(0.08f, 0.05f, ColorChangeType::BUBBLE, 
-		Vector2(220, 220), 0.02f, 0.1f, 6.5f, 19.0f, 130); // delete
+	BubbleEffect* bubbles = new BubbleEffect(0.08f, 0.05f, ColorChangeType::FIRE, 
+		Vector2(220, 220), 0.01f, 0.1f, 6.0f, 18.0f, 1.0f, 5.0f, 150);
 	manager.AddEffect(bubbles);
 
 	shipUpdateFn = Update_ScreenWrap;
