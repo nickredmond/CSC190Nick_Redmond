@@ -8,6 +8,8 @@
 #include "ParticleManager.h"
 #include "StarryNight.h"
 
+#include "AutoProfile.h"
+
 using Core::Input;
 using namespace Obstacles;
 using namespace Utils;
@@ -16,22 +18,27 @@ const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 
 Asteroid asteroid(Vector2(50, 30));
-
-//ExplosionEffect e= ExplosionEffect(0.1f, 0.15f, ColorChangeType::EXPLOSION, 
-//		Vector2(300, 300), 2.0f, 12.0f, 500);
-
 ParticleManager manager;
 StarryNight bgStars(SCREEN_WIDTH, SCREEN_HEIGHT, 100, 0.5f);
 
 Core::RGB defaultColor = RGB(255, 255, 255);
 Spaceship ship(20, 20);
 
+//test
+Timer time = Timer(0.5f);
+Profiler p = Profiler();
+
 bool Update(float dt){
 	dt;
+
+	{
+		PROFILE("ShipUpdate", p);
 	UpdateShipBehavior();
 	UpdateSelectedWeapon(ship);
 	ship.prev_dt = dt;
 	UpdateShipPosition(ship, dt);
+	}
+
 	bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
 
 	if (isCollision){
@@ -54,6 +61,8 @@ bool Update(float dt){
 	bgStars.Update(dt);
 
 	Utils::Controls::Update();
+
+	time.Update(dt, true);
 
 	wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
 	return (Input::IsPressed(Input::KEY_ESCAPE));
@@ -86,6 +95,8 @@ void Draw(Core::Graphics& graphics){
 
 	Utils::Controls::Draw(300, 230, graphics);
 
+	time.Draw(graphics);
+
 	for (int i = 0; i <= MAX_BULLET_INDEX; i++){
 		if (bullets[i].isVisible){
 			bullets[i].Draw(graphics);
@@ -105,6 +116,24 @@ void Draw(Core::Graphics& graphics){
 
 int main()
 {
+	p.AddCategory("ShipUpdate");
+
+	//Timer t = Timer();
+	//t.Start();
+
+	//const int MAGIC_NUM = 5000000;
+	//int* stuff = new int[MAGIC_NUM];
+
+	//for (int i = 0; i < MAGIC_NUM; i++){
+	//	GaussianFunc(0.5f, 0.13f, 0.7f, 31.2f, 0.654f);
+	//	*(stuff+i) = i;
+	//}
+
+	//double no = t.Interval();
+	//double yes = t.Stop();
+
+	//yes;no;
+
 	asteroid.SetVelocity(100.2f, 100.2f);
 	ship.SetPosition(Vector2(400, 400), Vector2(float(Input::GetMouseX()), float(Input::GetMouseY())), 0.0f);
 
