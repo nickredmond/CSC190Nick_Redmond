@@ -1,12 +1,15 @@
 #ifndef PROFILER_H
 #define PROFILER_H
 
+#include <fstream>
+//#include "ExportHeader.h"
+
 const int DEFAULT_MAX_CAT = 15;
 const int DEFAULT_MAX_SMPL = 100;
 
 enum AddEntryResult { SUCCESS, CATEGORY_NOT_FOUND, NO_SAMPLES_LEFT };
 
-class _declspec(dllexport) Profiler{
+class __declspec(dllexport) Profiler{
 private:
 	const char* fileName;
 	int _maxSamples, _maxCategories, categoryIndex;
@@ -22,16 +25,12 @@ private:
 		_maxCategories = maxCategories;
 		categoryIndex = 0;
 	}
-	Profiler(){
+public:
+	Profiler(const char* _fileName = "profileStats.csv"){
+		fileName = _fileName;
 		_maxSamples = DEFAULT_MAX_SMPL;
 		_maxCategories = DEFAULT_MAX_CAT;
 		categoryIndex = 0;
-	}
-
-	Profiler p;
-public:
-	static Profiler GetInstance(){
-		return p;
 	}
 
 	void RunProfile(){}
@@ -64,7 +63,7 @@ public:
 
 				if (sIndex < DEFAULT_MAX_SMPL){
 					categories[i].samples[sIndex] = time;
-					categories[i].sampleIndex++;
+					categories[i].sampleIndex = categories[i].sampleIndex + 1;
 				}
 				else result = AddEntryResult::NO_SAMPLES_LEFT;
 			}
@@ -76,6 +75,36 @@ public:
 
 		return result;
 	}
+
+	void WriteToFile(){
+		std::ofstream stream(fileName);
+
+		for (int i = 0; i < categoryIndex; i++){
+			stream << categories[i].name;
+
+			if (i < (categoryIndex - 1)){
+				stream << ",";
+			}
+		}
+		stream << "\n";
+
+		bool addedValue = true;
+		for (int i = 0; i < DEFAULT_MAX_SMPL && addedValue; i++){
+			addedValue = false;
+
+			for (int j = 0; j < categoryIndex; j++){
+				if (i < categories[j].sampleIndex){
+					addedValue = true;
+					stream << categories[j].samples[i];
+				}
+				stream << ((j < categoryIndex - 1) ? "," : "\n");
+			}
+		}
+
+		stream.close();
+	}
 };
+
+Profiler profiler = Profiler();
 
 #endif

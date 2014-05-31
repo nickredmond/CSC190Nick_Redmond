@@ -24,48 +24,64 @@ StarryNight bgStars(SCREEN_WIDTH, SCREEN_HEIGHT, 100, 0.5f);
 Core::RGB defaultColor = RGB(255, 255, 255);
 Spaceship ship(20, 20);
 
-//test
 Timer time = Timer(0.5f);
-Profiler p = Profiler();
 
 bool Update(float dt){
-	dt;
+	{
+		PROFILE("SpaceshipUpdate");
+		UpdateShipBehavior();
+		UpdateSelectedWeapon(ship);
+		ship.prev_dt = dt;
+		UpdateShipPosition(ship, dt);
+	}
 
 	{
-		PROFILE("ShipUpdate", p);
-	UpdateShipBehavior();
-	UpdateSelectedWeapon(ship);
-	ship.prev_dt = dt;
-	UpdateShipPosition(ship, dt);
-	}
+		PROFILE("CollisionUpdate");
+		bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
 
-	bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
-
-	if (isCollision){
-		ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
-			ship.GetPosition(), 1.0f, 10.0f, 215);
-		manager.AddEffect(explosion);
-	}
-
-	UpdateBullets(dt);
-	asteroid.Update(dt);
-
-	Utils::BackgroundObjects::Update();
-	if (Utils::isVisible){
-		for (int i = 0; i <= MAX_BG_INDEX; i++){
-			bgObjects[i].Update(dt);
+		if (isCollision){
+			ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
+				ship.GetPosition(), 1.0f, 10.0f, 215);
+			manager.AddEffect(explosion);
 		}
 	}
 
-	manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
-	bgStars.Update(dt);
+	{
+		PROFILE("ProjectilesUpdate");
+		UpdateBullets(dt);
+	}
 
+	{
+		PROFILE("BackgroundUpdate");
+
+		Utils::BackgroundObjects::Update();
+		if (Utils::isVisible){
+			for (int i = 0; i <= MAX_BG_INDEX; i++){
+				bgObjects[i].Update(dt);
+			}
+		}
+
+		bgStars.Update(dt);
+	}
+
+	{
+		PROFILE("ParticlesUpdate");
+		manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
+	}
+
+	asteroid.Update(dt);
 	Utils::Controls::Update();
 
 	time.Update(dt, true);
 
 	wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
-	return (Input::IsPressed(Input::KEY_ESCAPE));
+	bool requestedExit = (Input::IsPressed(Input::KEY_ESCAPE));
+
+	if (requestedExit){
+		profiler.WriteToFile();
+	}
+
+	return requestedExit;
 }
 
 void Draw(Core::Graphics& graphics){
@@ -89,7 +105,11 @@ void Draw(Core::Graphics& graphics){
 		Debug::DrawValue(graphics, 285, 110, float(gun.GetTotalAmmo()));
 	}
 
-	ship.Draw(graphics);
+	{
+		PROFILE("SpaceshipDraw");
+		ship.Draw(graphics);
+	}
+
 	Obstacles::DrawWalls(graphics);
 	asteroid.Draw(graphics);
 
@@ -97,42 +117,46 @@ void Draw(Core::Graphics& graphics){
 
 	time.Draw(graphics);
 
-	for (int i = 0; i <= MAX_BULLET_INDEX; i++){
-		if (bullets[i].isVisible){
-			bullets[i].Draw(graphics);
+	{
+		PROFILE("ProjectilesDraw");
+		for (int i = 0; i <= MAX_BULLET_INDEX; i++){
+			if (bullets[i].isVisible){
+				bullets[i].Draw(graphics);
+			}
 		}
 	}
 
-	if (Utils::isVisible){
-		for (int i = 0; i <= MAX_BG_INDEX; i++){
-			bgObjects[i].Draw(graphics);
-		}
-	}
-	else Utils::BackgroundObjects::Draw(graphics);
+	{
+		PROFILE("BackgroundDraw");
 
-	manager.Draw(graphics);
-	bgStars.Draw(graphics);
+		if (Utils::isVisible){
+			for (int i = 0; i <= MAX_BG_INDEX; i++){
+				bgObjects[i].Draw(graphics);
+			}
+		}
+		else Utils::BackgroundObjects::Draw(graphics);
+
+		bgStars.Draw(graphics);
+	}
+
+	{
+		PROFILE("ParticlesDraw");
+		manager.Draw(graphics);
+	}
 }
 
 int main()
 {
-	p.AddCategory("ShipUpdate");
+	profiler.AddCategory("SpaceshipUpdate");
+	profiler.AddCategory("CollisionUpdate");
+	profiler.AddCategory("ParticlesUpdate");
+	profiler.AddCategory("ProjectilesUpdate");
+	profiler.AddCategory("BackgroundUpdate");
 
-	//Timer t = Timer();
-	//t.Start();
-
-	//const int MAGIC_NUM = 5000000;
-	//int* stuff = new int[MAGIC_NUM];
-
-	//for (int i = 0; i < MAGIC_NUM; i++){
-	//	GaussianFunc(0.5f, 0.13f, 0.7f, 31.2f, 0.654f);
-	//	*(stuff+i) = i;
-	//}
-
-	//double no = t.Interval();
-	//double yes = t.Stop();
-
-	//yes;no;
+	profiler.AddCategory("SpaceshipDraw");
+	profiler.AddCategory("ProjectilesDraw");
+	profiler.AddCategory("BackgroundDraw");
+	profiler.AddCategory("ParticlesDraw");
 
 	asteroid.SetVelocity(100.2f, 100.2f);
 	ship.SetPosition(Vector2(400, 400), Vector2(float(Input::GetMouseX()), float(Input::GetMouseY())), 0.0f);

@@ -8,11 +8,9 @@ class AutoProfile{
 private:
 	const char* name;
 	Timer time;
-	Profiler profiler;
 public:
-	AutoProfile(const char* _name, Profiler& _profiler){
+	AutoProfile(const char* _name){
 		name = _name;
-		profiler = _profiler;
 		time = Timer();
 		time.Start();
 	}
@@ -22,6 +20,6 @@ public:
 	}
 };
 
-#define PROFILE(name) "AutoProfile p = AutoProfile(" ## name ## ", " ## #profiler ## ")"
+#define PROFILE(name) AutoProfile p(name)
 
 #endif

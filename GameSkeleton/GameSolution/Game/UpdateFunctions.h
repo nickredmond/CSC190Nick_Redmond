@@ -27,7 +27,7 @@ bool Update_ScreenWrap(Spaceship& ship, int screenWidth, int screenHeight, float
 	Vector2 position = ship.GetPosition();
 	float newX = position.x;
 	float newY = position.y;
-
+	
 	if (ship.IsOffRight(screenWidth)){
 		newX = float(ship._width) / 2;
 	}
@@ -232,9 +232,6 @@ void UpdateColors(ColorChangeType type, Particle* particles, int numParticles){
 			redValue = int((1.0f - ageRatio) * 200.0f);
 			greenValue = int((1.0f - ageRatio) * 200.0f);
 			blueValue = int(blueRatio * 255);
-
-
-				
 		}
 		else if (type == ColorChangeType::FIRE){
 			// white > yellow > orange > red > black
