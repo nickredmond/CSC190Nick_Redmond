@@ -24,6 +24,8 @@ private:
 public:
 	Asteroid(){numLines = 8;}
 	Asteroid(Vector2 startingPos, bool _isLerping = true, float _maxHealth = 100){
+		collisionRadius = 6.5f;
+
 		path[0] = Vector2(startingPos.x, startingPos.y);
 		path[1] = Vector2(startingPos.x + 100, startingPos.y);
 		path[2] = Vector2(startingPos.x, startingPos.y + 150);
@@ -103,10 +105,6 @@ public:
 			Vector2 pos = position + velocity;
 			SetPosition(pos);
 		}
-	}
-
-	bool IsAlive(){
-		return (currentHealth > 0.0f);
 	}
 };
 

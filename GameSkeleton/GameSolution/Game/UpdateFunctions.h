@@ -10,7 +10,7 @@ using namespace Obstacles;
 
 bool wasMousePressed;
 int currentBulletIndex;
-Bullet bullets[50];
+Bullet* bullets;
 
 const int MAX_BULLET_INDEX = 49;
 const int MAX_BG_INDEX = 3;
@@ -259,6 +259,11 @@ void UpdateColors(ColorChangeType type, Particle* particles, int numParticles){
 				blueValue = 0;
 				greenValue = 0;
 			}
+		}
+		else if (type == ColorChangeType::RANDOM){
+			redValue = p->_r - int(Utils::randomInRange(0.0f, 3.0f));
+			greenValue = p->_g - int(Utils::randomInRange(0.0f, 3.0f));
+			blueValue = p->_b - int(Utils::randomInRange(0.0f, 3.0f));
 		}
 		else if (type == ColorChangeType::EXPLOSION){
 			// NOT YET IMPLEMENTED

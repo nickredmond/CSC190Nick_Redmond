@@ -142,8 +142,6 @@ public:
 		//Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
 		DrawObj(graphics, transform);
 	}
-
-	bool IsAlive(){return true;}
 };
 
 #endif

@@ -58,8 +58,6 @@ public:
 		Vector2 translation = Vector2(position.x, position.y);
 		Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
 
-		Debug::DrawMatrix(300, 550, graphics, transform);
-
 		DrawObj(graphics, transform);
 		gun.Draw(graphics);
 	}

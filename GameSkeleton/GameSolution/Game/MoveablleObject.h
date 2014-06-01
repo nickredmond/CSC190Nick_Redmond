@@ -14,6 +14,7 @@ public:
 	Vector2* lines;
 	int numLines;
 	float angle, prev_dt, omega;
+	float collisionRadius;
 
 	MoveableObject(){
 		omega = 0.05f;
@@ -50,7 +51,9 @@ public:
 		currentHealth = 0;
 	}
 
-	virtual bool IsAlive() = 0;
+	bool IsAlive(){
+		return (currentHealth > 0.0f);
+	}
 };
 
 #endif

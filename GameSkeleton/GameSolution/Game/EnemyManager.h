@@ -20,6 +20,7 @@ private:
 	float spawnRate, timeSinceSpawn;
 	int screenWidth, screenHeight;
 	Bullet* bullets;
+	Bullet* shipBullets;
 	bool hasFilledBullets;
 	ParticleManager particles;
 
@@ -98,34 +99,45 @@ private:
 		return p.perpCCW();
 	}
 
-	bool IsCollision(Vector2 shipPos, Vector2 shipVel, MoveableObject& enemy, float dt){
+	bool IsCollision(Vector2 pos, Vector2 shipVel, MoveableObject& enemy, float dt, float collisionRadius){
 		dt;
 		shipVel;
 
-		float collisionRadius = 5.0f;
-		Vector2 shipMinusEnemy = shipPos - enemy.GetPosition();
-
+		Vector2 shipMinusEnemy = pos - enemy.GetPosition();
 		return (shipMinusEnemy.length() <= collisionRadius);
+	}
 
-		//for (int i = 0; i < enemy.numLines && !collision; i+=2){
-		//	Vector2 n = normalizedPerp(enemy.lines[i], enemy.lines[i+1]);
-
-		//	Vector2 q1 = shipPos - enemy.lines[i];
-		//	float d1 = q1.dotProduct(n);
-
-		//	Vector2 afterPos = shipPos + (shipVel * dt);
-		//	Vector2 q2 = afterPos - enemy.lines[i];
-		//	float d2 = q2.dotProduct(n);
-
-		//	collision = (d1 > 0 && d2 < 0);
-		//}
-
-		//return collision;
+	void DetectShipBulletCollisions(float dt){
+		for (int i = 0; i < MAX_BULLET_INDEX + 1; i++){
+			for (int j = 0; j < chaserIndex; j++){
+				if (chasers[j].IsAlive() && !shipBullets[i].isNull && IsCollision(shipBullets[i].GetPosition(), Vector2(), chasers[j], dt, chasers[j].collisionRadius)){
+					chasers[j].Kill();
+					shipBullets[i].isVisible = false;
+				
+					ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::RANDOM,
+						chasers[j].GetPosition(), 1.0f, 10.0f, 215);
+					particles.AddEffect(explosion);
+				}
+			}
+			for (int j = 0; j < turretIndex; j++){
+				if (turrets[j].IsAlive() && !shipBullets[i].isNull && IsCollision(shipBullets[i].GetPosition(), Vector2(), turrets[j], dt, turrets[j].collisionRadius)){
+					turrets[j].Kill();
+					shipBullets[i].isVisible = false;
+				
+					ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::RANDOM,
+						turrets[j].GetPosition(), 1.0f, 10.0f, 215);
+					particles.AddEffect(explosion);
+				}
+			}
+		}
 	}
 public:
-	EnemyManager(ParticleManager& manager, int mothershipKills, float _spawnRate, int _screenWidth, int _screenHeight, int _maxTurrets = 5,
+	EnemyManager(){}
+
+	EnemyManager(ParticleManager& manager, Bullet* _shipBulets, int mothershipKills, float _spawnRate, int _screenWidth, int _screenHeight, int _maxTurrets = 5,
 		int _maxChasers = 10){
 		particles = manager;
+		shipBullets = _shipBulets;
 
 		killsBeforeMothership = mothershipKills;
 		spawnRate = _spawnRate;
@@ -150,7 +162,7 @@ public:
 	//	delete [] turrets;
 	//}
 
-	void Update(Vector2 shipPos, Vector2 shipVel, float dt){
+	void Update(Spaceship& ship, float dt){
 		timeSinceSpawn += dt;
 
 		if (timeSinceSpawn >= spawnRate){
@@ -158,13 +170,14 @@ public:
 		}
 
 		for (int i = 0; i < turretIndex; i++){
-			turrets[i].Update(shipPos, dt);
+			turrets[i].Update(ship.GetPosition(), dt);
 
 			if (turrets[i].CanFire()){
 				Bullet* firedBullets = turrets[i].Fire();
 
 				for (int j = 0; j < turrets[i].GetBulletsPerShot(); j++){
 					bullets[bulletIndex] = *(firedBullets + j);
+					bullets[bulletIndex].isVisible = true;
 					bulletIndex++;
 
 					if (bulletIndex >= MAX_BULLETS){
@@ -175,14 +188,16 @@ public:
 			}
 		}
 		for (int i = 0; i < chaserIndex; i++){
-			chasers[i].Update(dt, shipPos);
+			if (chasers[i].IsAlive()){
+				chasers[i].Update(dt, ship.GetPosition());
 
-			if (IsCollision(shipPos, shipVel, chasers[i], dt) && chasers[i].IsAlive()){
-				chasers[i].Kill();
+				if (IsCollision(ship.GetPosition(), ship.GetVelocity(), chasers[i], dt, chasers[i].collisionRadius)){
+					chasers[i].Kill();
 				
-				ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
-				shipPos, 1.0f, 10.0f, 215);
-				particles.AddEffect(explosion);
+					ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::RANDOM,
+						chasers[i].GetPosition(), 1.0f, 10.0f, 215);
+					particles.AddEffect(explosion);
+				}
 			}
 		}
 		// draw mothership
@@ -190,24 +205,36 @@ public:
 		int currentMaxIndex = (hasFilledBullets ? MAX_BULLETS : bulletIndex);
 		for (int i = 0; i < currentMaxIndex; i++){
 			bullets[i].Update(dt);
+
+			if (IsCollision(bullets[i].GetPosition(), Vector2(0, 0), ship, dt, 12.5f)){
+				bullets[i].isVisible = false;
+			}
 		}
 
-		particles.Update(true, 0.0f, shipPos, dt);
+		DetectShipBulletCollisions(dt);
+
+		particles.Update(true, 0.0f, ship.GetPosition(), dt);
 	}
 	void Draw(Core::Graphics& graphics){
 		Core::RGB color = RGB(255, 255, 255);
 		graphics.SetColor(color);
 
 		for (int i = 0; i < turretIndex; i++){
-			turrets[i].Draw(graphics);
+			if (turrets[i].IsAlive()){
+				turrets[i].Draw(graphics);
+			}
 		}
 		for (int i = 0; i < chaserIndex; i++){
-			chasers[i].Draw(graphics);
+			if (chasers[i].IsAlive()){
+				chasers[i].Draw(graphics);
+			}
 		}
 
 		int currentMaxIndex = (hasFilledBullets ? MAX_BULLETS : bulletIndex);
 		for (int i = 0; i < currentMaxIndex; i++){
-			bullets[i].Draw(graphics);
+			if (bullets[i].isVisible){
+				bullets[i].Draw(graphics);
+			}
 		}
 
 		particles.Draw(graphics);

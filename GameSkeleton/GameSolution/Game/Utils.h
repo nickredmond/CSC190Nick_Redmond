@@ -33,7 +33,7 @@ namespace Utils{
 				graphics.DrawString(x, y + 40, "A = Rotate Left, D = Rotate Right");
 				graphics.DrawString(x, y + 60, "Press left mouse button to fire missiles.");
 			}
-			else graphics.DrawString(530, 30, "Press 'Q' for controls.");
+			else graphics.DrawString(730, 30, "Press 'Q' for controls.");
 		}
 		static void Update(){
 			if (Input::IsPressed(TOGGLE_KEY) && !wasToggled){
@@ -52,7 +52,7 @@ namespace Utils{
 		}
 		static void Draw(Core::Graphics& graphics){
 			if (!isVisible){
-				graphics.DrawString(530, 55, "Press 'E' to display background objects.");
+				graphics.DrawString(730, 55, "Press 'E' to display background objects.");
 			}
 		}
 		static void Update(){
@@ -64,7 +64,7 @@ namespace Utils{
 		}
 	};
 
-	enum ColorChangeType { FIRE, EXPLOSION, BUBBLE };
+	enum ColorChangeType { FIRE, EXPLOSION, BUBBLE, RANDOM };
 
 	float randomFloat(){
 		return float(rand()) / RAND_MAX;

@@ -66,7 +66,10 @@ public:
 
 	}
 
-	AutoTurret(char* name, Vector2 pos, float _fireRate = 1.0f){
+	AutoTurret(char* name, Vector2 pos, float _fireRate = 1.0f, float _maxHealth = 100.0f){
+		collisionRadius = 11.0f;
+		currentHealth = _maxHealth;
+
 		_name = name;
 		fireRate = _fireRate;
 
@@ -100,10 +103,6 @@ public:
 	Bullet* Fire(){
 		timeSinceFired = 0.0f;
 		return GetBullets();
-	}
-
-	bool IsAlive(){
-		return true;
 	}
 };
 

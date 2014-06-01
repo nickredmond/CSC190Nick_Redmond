@@ -16,11 +16,28 @@ public:
 			minVelocity = minVel;
 			maxVelocity = maxVel;
 
+			int r = 0;
+			int g = 0;
+			int b = 0;
+			float variance = 30.0f;
+
+			if (type == ColorChangeType::RANDOM){
+				r = int(Utils::randomInRange(0.0f, 255.0f));
+				g = int(Utils::randomInRange(0.0f, 255.0f));
+				b = int(Utils::randomInRange(0.0f, 255.0f));
+			}
+
 			for (int i = 0; i < numParticles; i++){
 				Vector2 velocity = Utils::randomVelocity(minVel, maxVel);
 				float LIFETIME = Utils::randomInRange(0.25f, 1.0f);
 
 				particles[i] = Particle(position, velocity, LIFETIME, type);
+
+				if (type == ColorChangeType::RANDOM){
+					particles[i]._r = int(Utils::randomInRange((r - variance), (r + variance)));
+					particles[i]._g = int(Utils::randomInRange((g - variance), (g + variance)));
+					particles[i]._b = int(Utils::randomInRange((b - variance), (b + variance)));
+				}
 			}
 	}
 

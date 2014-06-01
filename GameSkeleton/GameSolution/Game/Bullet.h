@@ -4,6 +4,7 @@
 #include "MoveablleObject.h"
 
 const float BULLET_VELOCITY = 250;
+Core::RGB bulletColor = RGB(160, 160, 255);
 
 class Bullet : public MoveableObject{
 private:
@@ -14,14 +15,22 @@ private:
 		position.x = 0;
 		position.y = 0;
 
-		lines[0].x = position.x - 1;
-		lines[0].y = position.y - 1;
-		lines[1].x = position.x + 1;
-		lines[1].y = position.y - 1;
-		lines[2].x = position.x + 1;
-		lines[2].y = position.y + 1;
-		lines[3].x = position.x - 1;
-		lines[3].y = position.y + 1; 
+		lines[0].x = position.x - 2;
+		lines[0].y = position.y - 2;
+		lines[1].x = position.x + 2;
+		lines[1].y = position.y - 2;
+		lines[2].x = position.x + 2;
+		lines[2].y = position.y - 2;
+		lines[3].x = position.x + 2;
+		lines[3].y = position.y + 2;
+		lines[4].x = position.x + 2;
+		lines[4].y = position.y + 2;
+		lines[5].x = position.x - 2;
+		lines[5].y = position.y + 2; 
+		lines[6].x = position.x - 2;
+		lines[6].y = position.y + 2; 
+		lines[7].x = position.x - 2;
+		lines[7].y = position.y - 2;
 
 		position.x = pos.x;
 		position.y = pos.y;
@@ -43,20 +52,24 @@ private:
 		position.y = pos.y;
 	}
 public:
-	bool isVisible;
+	bool isVisible, isNull;
 
-	Bullet(){}
+	Bullet(){
+		isNull = true;
+	}
 
 	Bullet(Vector2 vel, Vector2 pos){
 		isVisible = false;
 		velocity = vel;
 
-		numLines = 4;
+		numLines = 8;
 		lines = new Vector2[numLines];
 
 		SetPosition(pos);
 	}
 	Bullet(Vector2 vel, Vector2 pos, bool isLaser){
+		isNull = false;
+
 		isVisible = false;
 		velocity = vel;
 
@@ -76,6 +89,7 @@ public:
 	}
 
 	void Update(float dt){
+		isNull = false;
 		position = position + (velocity * dt);
 
 		if (!_isLaser){
@@ -85,7 +99,10 @@ public:
 	}
 
 	void Draw(Core::Graphics& graphics){
-		DrawObj(graphics, transform);
+		if(!isNull){
+			graphics.SetColor(bulletColor);
+			DrawObj(graphics, transform);
+		}
 	}
 
 	bool IsAlive(){return true;}
