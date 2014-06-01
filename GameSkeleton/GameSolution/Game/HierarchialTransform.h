@@ -34,9 +34,17 @@ private:
 		lines[1].x = position.x + 100;
 		lines[1].y = position.y - 100;
 		lines[2].x = position.x + 100;
-		lines[2].y = position.y + 100;
-		lines[3].x = position.x - 100;
-		lines[3].y = position.y + 100; 
+		lines[2].y = position.y - 100;
+		lines[3].x = position.x + 100;
+		lines[3].y = position.y + 100;
+		lines[4].x = position.x + 100;
+		lines[4].y = position.y + 100;
+		lines[5].x = position.x - 100;
+		lines[5].y = position.y + 100; 
+		lines[6].x = position.x - 100;
+		lines[6].y = position.y + 100; 
+		lines[7].x = position.x - 100;
+		lines[7].y = position.y - 100;
 
 		position.x = pos.x;
 		position.y = pos.y;
@@ -126,7 +134,7 @@ public:
 		_translation = translation;
 		numShapes = numberOfShapes;
 
-		numLines = 4;
+		numLines = 8;
 		lines = new Vector2[numLines];
 
 		SetPosition(pos);
@@ -147,6 +155,8 @@ public:
 		Matrix3 transform = Matrix3::Rotation(angle);
 		DrawShape(graphics, 1, transform, 1.0f, 0);
 	}
+
+	bool IsAlive(){return true;}
 };
 
 #endif

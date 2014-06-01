@@ -8,10 +8,11 @@
 using std::strcmp;
 
 class Turret : public MoveableObject{
+protected:
+	Matrix3 transform;
 private:
 	int magazineAmmo, totalAmmo, magazineSize, _length;
 	float totalReloadTime, currentReloadTime;
-	Matrix3 transform;
 	Bullet result[3];
 
 	void UpdateReload(float dt){
@@ -36,6 +37,29 @@ private:
 			currentReloadTime = 0.0f;
 			reloadPercent = 0.0f;
 		}
+	}
+protected:
+	Bullet* GetBullets(){
+		if (strcmp(_name, "Single Shot") == 0){
+			Vector2 vel = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
+			result[0] = Bullet(vel, Vector2(transform.data[2], transform.data[5]));
+		}
+		else if (strcmp(_name, "Triple Shot") == 0){
+			Vector2 vel1 = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
+			Vector2 vel2 = Matrix3::Rotation(angle + 0.07f) * Vector2(BULLET_VELOCITY, 0);
+			Vector2 vel3 = Matrix3::Rotation(angle - 0.07f) * Vector2(BULLET_VELOCITY, 0);
+
+			result[0] = Bullet(vel1, Vector2(transform.data[2], transform.data[5]));
+			result[1] = Bullet(vel2, Vector2(transform.data[2], transform.data[5]));
+			result[2] = Bullet(vel3, Vector2(transform.data[2], transform.data[5]));
+		}
+		else if (strcmp(_name, "Laser") == 0){
+			Vector2 vel = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
+			result[0] = Bullet(vel, Vector2(transform.data[2], transform.data[5]), true);
+			result[0].angle = angle;
+		}
+
+		return result;
 	}
 public:
 	bool isReloading;
@@ -90,28 +114,7 @@ public:
 		if (magazineAmmo > 0){
 			magazineAmmo -= 1;
 			
-			if (strcmp(_name, "Single Shot") == 0){
-				Vector2 vel = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
-				result[0] = Bullet(vel, Vector2(transform.data[2], transform.data[5]));
-			}
-			else if (strcmp(_name, "Triple Shot") == 0){
-				Vector2 vel1 = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
-				Vector2 vel2 = Matrix3::Rotation(angle + 0.07f) * Vector2(BULLET_VELOCITY, 0);
-				Vector2 vel3 = Matrix3::Rotation(angle - 0.07f) * Vector2(BULLET_VELOCITY, 0);
-
-				result[0] = Bullet(vel1, Vector2(transform.data[2], transform.data[5]));
-				result[1] = Bullet(vel2, Vector2(transform.data[2], transform.data[5]));
-				result[2] = Bullet(vel3, Vector2(transform.data[2], transform.data[5]));
-			}
-			else if (strcmp(_name, "Laser") == 0){
-				Vector2 vel = Matrix3::Rotation(angle) * Vector2(BULLET_VELOCITY, 0);
-				result[0] = Bullet(vel, Vector2(transform.data[2], transform.data[5]), true);
-				result[0].angle = angle;
-			}
-
-			if (magazineAmmo == 0){
-				isReloading = true;
-			}
+			result[0] = *GetBullets();
 		}
 		else {
 			isReloading = true;
@@ -139,6 +142,8 @@ public:
 		//Matrix3 transform = Matrix3::Translation(translation) * Matrix3::Rotation(angle);
 		DrawObj(graphics, transform);
 	}
+
+	bool IsAlive(){return true;}
 };
 
 #endif

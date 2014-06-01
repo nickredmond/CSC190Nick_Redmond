@@ -4,6 +4,7 @@
 #include "Spaceship.h"
 #include "Utils.h"
 #include "Particle.h"
+#include "Wall.h"
 
 using namespace Obstacles;
 

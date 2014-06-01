@@ -87,6 +87,8 @@ public:
 	void Draw(Core::Graphics& graphics){
 		DrawObj(graphics, transform);
 	}
+
+	bool IsAlive(){return true;}
 };
 
 #endif

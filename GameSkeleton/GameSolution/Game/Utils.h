@@ -100,6 +100,10 @@ namespace Utils{
 		Vector2 result = Vector2(cos(angle), sin(angle)) * randomInRange(min, max);
 		return result;
 	}
+
+	float Perimeter(float width, float height){
+		return (2 * width) + (2 * height);
+	}
 }
 
 #endif

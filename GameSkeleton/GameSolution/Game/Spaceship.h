@@ -17,7 +17,7 @@ public:
 		_width = width;
 		_height = height;
 
-		numLines = 6;
+		numLines = 12;
 		lines = new Vector2[numLines];
 
 		SetPosition(Vector2(0, 0), Vector2(0, 0), 0.0f);
@@ -72,14 +72,26 @@ public:
 		lines[0].y = position.y - (float(_height) / 2);
 		lines[1].x = position.x + (float(_width) / 2);
 		lines[1].y = position.y;
-		lines[2].x = position.x + (float(_width) / 4);
-		lines[2].y = position.y + (0.67f * _height);
-		lines[3].x = position.x;
-		lines[3].y = position.y + (0.33f * _height); 
-		lines[4].x = position.x - (float(_width) / 4);
+		lines[2].x = position.x + (float(_width) / 2);
+		lines[2].y = position.y;
+		lines[3].x = position.x + (float(_width) / 4);
+		lines[3].y = position.y + (0.67f * _height);
+		lines[4].x = position.x + (float(_width) / 4);
 		lines[4].y = position.y + (0.67f * _height);
-		lines[5].x = position.x - (float(_width) / 2);
-		lines[5].y = position.y;
+		lines[5].x = position.x;
+		lines[5].y = position.y + (0.33f * _height); 
+		lines[6].x = position.x;
+		lines[6].y = position.y + (0.33f * _height); 
+		lines[7].x = position.x - (float(_width) / 4);
+		lines[7].y = position.y + (0.67f * _height);
+		lines[8].x = position.x - (float(_width) / 4);
+		lines[8].y = position.y + (0.67f * _height);
+		lines[9].x = position.x - (float(_width) / 2);
+		lines[9].y = position.y;
+		lines[10].x = position.x - (float(_width) / 2);
+		lines[10].y = position.y;
+		lines[11].x = position.x;
+		lines[11].y = position.y - (float(_height) / 2);
 
 		position.x = pos.x;
 		position.y = pos.y;
@@ -99,6 +111,8 @@ public:
 	bool IsOffBottom(int screenHeight){
 		return ((position.y + (_height / 2) > screenHeight) && velocity.y > 0);
 	}
+
+	bool IsAlive(){return true;}
 };
 
 #endif

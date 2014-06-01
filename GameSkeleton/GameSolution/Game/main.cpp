@@ -1,11 +1,9 @@
 #include "Asteroid.h"
 #include "HierarchialTransform.h"
-#include "Utils.h"
+#include "EnemyManager.h"
 #include "Wall.h"
-#include "UpdateFunctions.h"
 #include "ExplosionEffect.h"
 #include "BubbleEffect.h"
-#include "ParticleManager.h"
 #include "StarryNight.h"
 
 #include "AutoProfile.h"
@@ -19,6 +17,7 @@ const int SCREEN_HEIGHT = 600;
 
 Asteroid asteroid(Vector2(50, 30));
 ParticleManager manager;
+EnemyManager em = EnemyManager(manager, 10, 0.5f, SCREEN_WIDTH, SCREEN_HEIGHT);
 StarryNight bgStars(SCREEN_WIDTH, SCREEN_HEIGHT, 100, 0.5f);
 
 Core::RGB defaultColor = RGB(255, 255, 255);
@@ -69,8 +68,10 @@ bool Update(float dt){
 		manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
 	}
 
-	asteroid.Update(dt);
+	asteroid.Update(dt, ship.GetPosition());
 	Utils::Controls::Update();
+
+	em.Update(ship.GetPosition(), ship.GetVelocity(), dt);
 
 	time.Update(dt, true);
 
@@ -143,6 +144,8 @@ void Draw(Core::Graphics& graphics){
 		PROFILE("ParticlesDraw");
 		manager.Draw(graphics);
 	}
+
+	em.Draw(graphics);
 }
 
 int main()
@@ -162,7 +165,7 @@ int main()
 	ship.SetPosition(Vector2(400, 400), Vector2(float(Input::GetMouseX()), float(Input::GetMouseY())), 0.0f);
 
 	BubbleEffect* bubbles = new BubbleEffect(0.08f, 0.05f, ColorChangeType::FIRE, 
-		Vector2(220, 220), 0.01f, 0.1f, 6.0f, 18.0f, 1.0f, 5.0f, 150);
+		Vector2(220, 220), 0.01f, 0.1f, 6.0f, 18.0f, 1.0f, 5.0f, 125);
 	manager.AddEffect(bubbles);
 
 	shipUpdateFn = Update_ScreenWrap;

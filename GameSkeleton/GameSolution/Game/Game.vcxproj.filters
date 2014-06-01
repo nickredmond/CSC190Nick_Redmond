@@ -67,5 +67,14 @@
     <ClInclude Include="StarryNight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="AutoTurret.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

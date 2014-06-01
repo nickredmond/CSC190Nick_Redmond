@@ -1,3 +1,6 @@
+#ifndef P_MANAGER_H
+#define P_MANAGER_H
+
 #include <vector>
 #include "ParticleEffect.h"
 #include "UpdateFunctions.h"
@@ -59,3 +62,5 @@ public:
 		}
 	}
 };
+
+#endif
