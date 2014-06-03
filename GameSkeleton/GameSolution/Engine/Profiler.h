@@ -10,6 +10,9 @@ const int DEFAULT_MAX_SMPL = 100;
 enum AddEntryResult { SUCCESS, CATEGORY_NOT_FOUND, NO_SAMPLES_LEFT };
 
 class __declspec(dllexport) Profiler{
+
+#ifdef PROFILING_ENABLED
+
 private:
 	const char* fileName;
 	int _maxSamples, _maxCategories, categoryIndex;
@@ -103,6 +106,15 @@ public:
 
 		stream.close();
 	}
+#else
+public:
+	Profiler(const char* _fileName = "profileStats.csv"){_fileName;}
+	void RunProfile(){}
+	bool AddCategory(const char* categoryName){	categoryName;return false;}
+	AddEntryResult AddEntry(const char* category, float time){	category;time;return AddEntryResult::SUCCESS;}
+	void WriteToFile(){}
+
+#endif
 };
 
 Profiler profiler = Profiler();

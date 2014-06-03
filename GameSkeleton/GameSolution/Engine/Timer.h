@@ -5,6 +5,9 @@
 #include "Debug.h"
 
 class Timer{
+
+#ifdef PROFILING_ENABLED
+
 private:
 	LARGE_INTEGER startTime;
 	LARGE_INTEGER stopTime;
@@ -86,6 +89,19 @@ public:
 			Debug::DrawValue(graphics, (xPos + 120), (yPos + 20), Debug::Debug_RoundValue(secsPerFrame));
 		}
 	}
+#else
+
+public:
+	Timer(float _refreshRate = 0.0f, int _xPos = 20, int _yPos = 20){_refreshRate;_xPos;_yPos;}
+	void Start(){}
+	float Stop(){return 0.0f;}
+	float Invterval(){return 0.0f;}
+	void Update(float dt, bool drawable){
+		int x = 0;
+		x;dt;drawable;}
+	void Draw(Core::Graphics& graphics){graphics;}
+
+#endif
 };
 
 #endif

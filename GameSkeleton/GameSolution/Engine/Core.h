@@ -10,6 +10,7 @@
 #include "window.h"
 #include "graphics.h"
 #include "Input.h"
+#define PROFILING_ENABLED
 
 namespace Core
 {
