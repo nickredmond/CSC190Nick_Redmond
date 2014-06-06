@@ -5,8 +5,10 @@
 #include "ExplosionEffect.h"
 #include "BubbleEffect.h"
 #include "StarryNight.h"
+#include "Logger.h"
 
 #include "AutoProfile.h"
+#include "SpaceshipEditor.h"
 
 using Core::Input;
 using namespace Obstacles;
@@ -24,133 +26,161 @@ Core::RGB defaultColor = RGB(255, 255, 255);
 Spaceship ship(20, 20);
 
 Timer time = Timer(0.5f);
+SpaceshipEditor editor = SpaceshipEditor(SCREEN_WIDTH, SCREEN_HEIGHT);
 
-bool Update(float dt){
-	{
-		PROFILE("SpaceshipUpdate");
-		UpdateShipBehavior();
-		UpdateSelectedWeapon(ship);
-		ship.prev_dt = dt;
-		UpdateShipPosition(ship, dt);
-	}
+bool isEditingSpaceship;
 
-	{
-		PROFILE("CollisionUpdate");
-		bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
+bool Update(float dt){dt;
+	if (isEditingSpaceship){
+		editor.Update();
 
-		if (isCollision){
-			ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
-				ship.GetPosition(), 1.0f, 10.0f, 215);
-			manager.AddEffect(explosion);
+		if (editor.IsExited() || editor.IsSpaceshipReady()){
+			isEditingSpaceship = false;
+
+			if (editor.IsSpaceshipReady()){
+				ship = editor.GetSpaceship();
+			}
+
+			editor.Reset();
 		}
 	}
+	else{
+		{
+			PROFILE("SpaceshipUpdate");
+			UpdateShipBehavior();
+			UpdateSelectedWeapon(ship);
+			ship.prev_dt = dt;
+			UpdateShipPosition(ship, dt);
+		}
 
-	{
-		PROFILE("ProjectilesUpdate");
-		UpdateBullets(dt);
-	}
+		{
+			PROFILE("CollisionUpdate");
+			bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
 
-	{
-		PROFILE("BackgroundUpdate");
-
-		Utils::BackgroundObjects::Update();
-		if (Utils::isVisible){
-			for (int i = 0; i <= MAX_BG_INDEX; i++){
-				bgObjects[i].Update(dt);
+			if (isCollision){
+				ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
+					ship.GetPosition(), 1.0f, 10.0f, 215);
+				manager.AddEffect(explosion);
 			}
 		}
 
-		bgStars.Update(dt);
+		{
+			PROFILE("ProjectilesUpdate");
+			UpdateBullets(dt);
+		}
+
+		{
+			PROFILE("BackgroundUpdate");
+
+			Utils::BackgroundObjects::Update();
+			if (Utils::isVisible){
+				for (int i = 0; i <= MAX_BG_INDEX; i++){
+					bgObjects[i].Update(dt);
+				}
+			}
+
+			bgStars.Update(dt);
+		}
+
+		{
+			PROFILE("ParticlesUpdate");
+			manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
+		}
+
+		asteroid.Update(dt, ship.GetPosition());
+		Utils::Controls::Update();
+
+		{
+			PROFILE("EnemiesUpdate");
+			em.Update(ship, dt);
+		}
+
+		time.Update(dt, true);
+
+		wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
 	}
 
-	{
-		PROFILE("ParticlesUpdate");
-		manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
+	if (Input::IsPressed('O')){
+		isEditingSpaceship = true;
 	}
 
-	asteroid.Update(dt, ship.GetPosition());
-	Utils::Controls::Update();
-
-	{
-		PROFILE("EnemiesUpdate");
-		em.Update(ship, dt);
-	}
-
-	time.Update(dt, true);
-
-	wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
 	bool requestedExit = (Input::IsPressed(Input::KEY_ESCAPE));
-
 	if (requestedExit){
 		profiler.WriteToFile();
+		END_LOG
 	}
 
 	return requestedExit;
 }
 
 void Draw(Core::Graphics& graphics){
-	graphics.SetColor(defaultColor);
-
-	graphics.DrawString(20, 110, "Cycle ship collision modes with [F1, F2, F3]");
-	graphics.DrawString(30, 130, updateBehaviorTitle);
-	graphics.DrawString(20, 150, "Cycle weaponse with [1, 2, 3]");
-	graphics.DrawString(30, 170, currentWeaponTitle);
-
-	Turret gun = ship.GetTurret();
-	if (gun.isReloading){
-		graphics.DrawString(30, 190, "[Reloading:");
-		Debug::DrawValue(graphics, 120, 190, Debug::Debug_RoundValue(gun.reloadPercent * 100));
-		graphics.DrawString(170, 190, "%]");
+	if (isEditingSpaceship){
+		editor.Draw(graphics);
 	}
 	else{
-		graphics.DrawString(30, 190, "AMMO:");
-		Debug::DrawValue(graphics, 70, 190, float(gun.GetMagazineAmmo()));
-		graphics.DrawString(90, 190, "/");
-		Debug::DrawValue(graphics, 105, 190, float(gun.GetTotalAmmo()));
-	}
+		graphics.SetColor(defaultColor);
 
-	{
-		PROFILE("SpaceshipDraw");
-		ship.Draw(graphics);
-	}
+		graphics.DrawString(20, 110, "Cycle ship collision modes with [F1, F2, F3]");
+		graphics.DrawString(30, 130, updateBehaviorTitle);
+		graphics.DrawString(20, 150, "Cycle weaponse with [1, 2, 3]");
+		graphics.DrawString(30, 170, currentWeaponTitle);
 
-	Obstacles::DrawWalls(graphics);
-	asteroid.Draw(graphics);
+		Turret gun = ship.GetTurret();
+		if (gun.isReloading){
+			graphics.DrawString(30, 190, "[Reloading:");
+			Debug::DrawValue(graphics, 120, 190, Debug::Debug_RoundValue(gun.reloadPercent * 100));
+			graphics.DrawString(170, 190, "%]");
+		}
+		else{
+			graphics.DrawString(30, 190, "AMMO:");
+			Debug::DrawValue(graphics, 70, 190, float(gun.GetMagazineAmmo()));
+			graphics.DrawString(90, 190, "/");
+			Debug::DrawValue(graphics, 105, 190, float(gun.GetTotalAmmo()));
+		}
 
-	Utils::Controls::Draw(350, 280, graphics);
+		{
+			PROFILE("SpaceshipDraw");
+			ship.Draw(graphics);
+		}
 
-	time.Draw(graphics);
+		Obstacles::DrawWalls(graphics);
+		asteroid.Draw(graphics);
 
-	{
-		PROFILE("BackgroundDraw");
+		Utils::Controls::Draw(350, 280, graphics);
 
-		if (Utils::isVisible){
-			for (int i = 0; i <= MAX_BG_INDEX; i++){
-				bgObjects[i].Draw(graphics);
+		time.Draw(graphics);
+
+		{
+			PROFILE("BackgroundDraw");
+
+			if (Utils::isVisible){
+				for (int i = 0; i <= MAX_BG_INDEX; i++){
+					bgObjects[i].Draw(graphics);
+				}
+			}
+			else Utils::BackgroundObjects::Draw(graphics);
+
+			bgStars.Draw(graphics);
+		}
+
+		{
+			PROFILE("ProjectilesDraw");
+			for (int i = 0; i <= MAX_BULLET_INDEX; i++){
+				if (bullets[i].isVisible){
+					bullets[i].Draw(graphics);
+				}
 			}
 		}
-		else Utils::BackgroundObjects::Draw(graphics);
 
-		bgStars.Draw(graphics);
-	}
-
-	{
-		PROFILE("ProjectilesDraw");
-		for (int i = 0; i <= MAX_BULLET_INDEX; i++){
-			if (bullets[i].isVisible){
-				bullets[i].Draw(graphics);
-			}
+		{
+			PROFILE("ParticlesDraw");
+			manager.Draw(graphics);
 		}
-	}
 
-	{
-		PROFILE("ParticlesDraw");
-		manager.Draw(graphics);
-	}
-
-	{
-		PROFILE("EnemiesDraw");
-		em.Draw(graphics);
+		{
+			PROFILE("EnemiesDraw");
+			em.Draw(graphics);
+		}
 	}
 }
 
@@ -199,5 +229,7 @@ int main()
 	Core::RegisterUpdateFn(Update);
 	Core::RegisterDrawFn(Draw);
 	Core::GameLoop();
+
+	LOG(Info, "Game initialized");
 }
 

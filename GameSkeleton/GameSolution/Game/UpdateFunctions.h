@@ -5,6 +5,7 @@
 #include "Utils.h"
 #include "Particle.h"
 #include "Wall.h"
+#include "Logger.h"
 
 using namespace Obstacles;
 
@@ -207,6 +208,8 @@ void UpdateBullets(float dt){
 }
 
 void SetupBgObjects(){
+	LOG(Info, "Initializing background objects...");
+
 	bgObjects[0] = HierarchialTransform(0.8f, 50.0f, 3, Vector2(100, 100));;
 	bgObjects[1] = HierarchialTransform(0.8f, 50.0f, 3, Vector2(700, 100));;
 	bgObjects[2] = HierarchialTransform(0.8f, 50.0f, 3, Vector2(700, 500));;

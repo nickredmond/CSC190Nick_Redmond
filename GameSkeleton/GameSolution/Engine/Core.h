@@ -11,6 +11,7 @@
 #include "graphics.h"
 #include "Input.h"
 #define PROFILING_ENABLED
+#define LOG_ON
 
 namespace Core
 {

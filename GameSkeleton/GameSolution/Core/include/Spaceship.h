@@ -2,10 +2,6 @@
 #define SPACESHIP_H
 
 #include "Turret.h"
-#include "Assertions.h"
-#include <string>
-
-using std::string;
 
 using Core::Input;
 
@@ -20,14 +16,13 @@ public:
 	Spaceship(){}
 
 	Spaceship(int height, int width){
-		angle = 0.0f;
 		_width = width;
 		_height = height;
 
 		numLines = 12;
 		lines = new Vector2[numLines];
 
-		SetDefaultPosition(Vector2(0, 0), Vector2(0, 0), 0.0f);
+		SetPosition(Vector2(0, 0), Vector2(0, 0), 0.0f);
 
 		single = Turret(10, "Single Shot", 10, 100, 10, 5);
 		triple = Turret(10, "Triple Shot", 5, 50, 5, 2);
@@ -36,11 +31,6 @@ public:
 		gun = single;
 	}
 
-	void SetNumberLines(int _numLines){
-		numLines = _numLines;
-		delete [] lines;
-		lines = new Vector2[numLines];
-	}
 	void SetLine(int index, Vector2 lineStart, Vector2 lineEnd){
 		lines[index].x = lineStart.x;
 		lines[index].y = lineStart.y;
@@ -50,9 +40,6 @@ public:
 	}
 
 	void SetTurret(char* name){
-//		string tName = name;
-//		ASSERT(tName.length() > 0);
-
 		if (strcmp(gun._name, "Single Shot") == 0){
 			single = gun;
 		}
@@ -85,7 +72,7 @@ public:
 		gun.Draw(graphics);
 	}
 
-	void SetDefaultPosition(Vector2 pos, Vector2 mousePos, float dt){
+	void SetPosition(Vector2 pos, Vector2 mousePos, float dt){
 		position.x = 0;
 		position.y = 0;
 
@@ -114,13 +101,6 @@ public:
 		lines[11].x = position.x;
 		lines[11].y = position.y - (float(_height) / 2);
 
-		position.x = pos.x;
-		position.y = pos.y;
-
-		gun.Update(position, mousePos, dt);
-	}
-
-	void SetPosition(Vector2 pos, Vector2 mousePos, float dt){
 		position.x = pos.x;
 		position.y = pos.y;
 

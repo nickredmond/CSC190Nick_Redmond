@@ -93,7 +93,9 @@
     <ClCompile Include="Engine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Assertions.h" />
     <ClInclude Include="AutoProfile.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Engine.h" />
@@ -101,6 +103,7 @@
     <ClInclude Include="Matrix2.h" />
     <ClInclude Include="Matrix3.h" />
     <ClInclude Include="Profiler.h" />
+    <ClInclude Include="SpaceshipEditor.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Vector2.h" />
   </ItemGroup>
