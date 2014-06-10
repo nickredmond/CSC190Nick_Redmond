@@ -71,7 +71,7 @@ namespace Collisions{
 		}
 	}
 
-	int UpdateBlockCollisions(MoveableObject& obj, Item** items, int currentItemIndex, int numberItems, Block** blocks, int numBlocks, float dt,
+	int UpdateBlockCollisions(Player& obj, Item** items, int currentItemIndex, int numberItems, Block** blocks, int numBlocks, float dt,
 		ParticleManager& manager){
 		dt;
 		bool isValidIndex = (currentItemIndex < numberItems && currentItemIndex >= 0);
@@ -98,6 +98,10 @@ namespace Collisions{
 					items[itemIndex] = item;
 					itemIndex = (itemIndex < numberItems - 1) ? itemIndex + 1 : 0;
 					itemIncrement++;
+
+					if (item->isCoin){
+						obj.score = obj.score + 1;
+					}
 				}
 			}
 		}
@@ -118,10 +122,11 @@ namespace Collisions{
 					ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
 						nextEnemy->GetPosition(), 1.0f, 10.0f, 215);
 					manager.AddEffect(explosion);
+
+					plyr.Hurt();
 				}
 
 				nextEnemy->Hurt();
-				plyr.Hurt();
 			}
 		}
 	}

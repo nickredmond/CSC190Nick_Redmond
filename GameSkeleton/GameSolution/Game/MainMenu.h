@@ -64,17 +64,19 @@ public:
 		return true;
 	}
 	void Draw(Core::Graphics& graphics){
-		graphics.DrawString(int(position.x - 15), int(position.y - (2 * PER_LINE_INCREASE)), "TERRIBLE SUPER MARIO 3 RIPOFF");
+		graphics.DrawString(int(position.x - 25), int(position.y - (2 * PER_LINE_INCREASE)), "TERRIBLE SUPER MARIO 3 RIPOFF");
 
 		for (int i = 0; i < numberMenuItems; i++){
 			char* message = menuItems[i];
 			int yPos = int(position.y + (i * PER_LINE_INCREASE));
-			graphics.DrawString(int(position.x), yPos, message);
+			graphics.DrawString(int(position.x - 10), yPos, message);
 		}
 
+		graphics.DrawString(int(position.x - 10), int(position.y + ((numberMenuItems + 1) * PER_LINE_INCREASE)), "*** W/S = Up/Down *** SPACE = Select ***");
+
 		int pointerPos = int(position.y + (currentMenuIndex * PER_LINE_INCREASE));
-		graphics.DrawLine(position.x - 20, float(pointerPos - 5), position.x - 10, float(pointerPos + 5));
-		graphics.DrawLine(position.x - 20, float(pointerPos + 15), position.x - 10, float(pointerPos + 5));
+		graphics.DrawLine(position.x - 30, float(pointerPos - 5), position.x - 20, float(pointerPos + 5));
+		graphics.DrawLine(position.x - 30, float(pointerPos + 15), position.x - 20, float(pointerPos + 5));
 	}
 };
 

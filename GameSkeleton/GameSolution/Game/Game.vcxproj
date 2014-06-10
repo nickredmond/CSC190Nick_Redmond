@@ -86,7 +86,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Logger.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
@@ -96,6 +95,7 @@
     <ClInclude Include="Coin.h" />
     <ClInclude Include="CoinBlock.h" />
     <ClInclude Include="Collisions.h" />
+    <ClInclude Include="Controls.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="ExplosionEffect.h" />
     <ClInclude Include="FireballItem.h" />
@@ -104,7 +104,6 @@
     <ClInclude Include="ItemBox.h" />
     <ClInclude Include="Koopa.h" />
     <ClInclude Include="Level.h" />
-    <ClInclude Include="Logger.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="MoveablleObject.h" />
     <ClInclude Include="MysteryBlock.h" />

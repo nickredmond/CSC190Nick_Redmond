@@ -227,6 +227,9 @@ public:
 		return (!IsGameOver() && !IsWin());
 	}
 	void Draw(Core::Graphics& graphics){
+		graphics.DrawString(20, 20, "COINS:");
+		Debug::DrawValue(graphics, 80, 20, float(plyr.score));
+
 		if (hasWon){
 			graphics.DrawString((screenWidth / 2), (screenHeight / 2), "LEVEL COMPLETE");
 		}

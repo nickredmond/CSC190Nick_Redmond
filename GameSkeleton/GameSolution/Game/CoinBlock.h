@@ -21,6 +21,8 @@ public:
 		return numberCoins > 0;
 	}
 	Item* Hit(){
+		bool initialized = HasCoins();
+
 		if (numberCoins > 0){
 			numberCoins--;
 			currentCoin = Coin(position);
@@ -28,7 +30,10 @@ public:
 
 			super::Hit();
 		}
-		return new NullItem(false);
+
+		Item* coin = new NullItem(initialized);
+		coin->isCoin = true;
+		return coin;
 	}
 	
 	bool Update(float dt){

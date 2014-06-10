@@ -10,6 +10,7 @@
 #include "Collisions.h"
 #include "Level.h"
 #include "MainMenu.h"
+#include "Controls.h"
 
 using Core::Input;
 using namespace Obstacles;
@@ -34,6 +35,7 @@ int currentLevelIndex = 0;
 int numberLevels = 1;
 Level* levels;
 bool isMainMenu = false;
+bool isControls = false;
 
 bool isEditingSpaceship;
 
@@ -52,6 +54,12 @@ void UpdateGameState(){
 			menu.Reset();
 			isMainMenu = false;
 		}
+		else if (menuChoice == CONTROLS){
+			isControls = true;
+			ResetLevel();
+			menu.Reset();
+			isMainMenu = false;
+		}	
 	}
 }
 
@@ -70,11 +78,17 @@ bool Update(float dt){dt;
 		}
 	}
 	else{
-		if(!isMainMenu){
+		if(!isMainMenu && !isControls){
 			lvl.Update(dt);
 			manager->Update(false, 0.0f, Vector2(), dt);
 
 			if (lvl.IsWin() || lvl.IsGameOver()){
+				isMainMenu = true;
+			}
+		}
+		else if (isControls){
+			isControls = Controls::Update();
+			if (!isControls){
 				isMainMenu = true;
 			}
 		}
@@ -104,7 +118,7 @@ void Draw(Core::Graphics& graphics){
 	else{
 		graphics.SetColor(defaultColor);
 
-		if(!isMainMenu){
+		if(!isMainMenu && !isControls){
 			{
 				PROFILE("LevelDraw");
 				lvl.Draw(graphics);
@@ -114,12 +128,12 @@ void Draw(Core::Graphics& graphics){
 				manager->Draw(graphics);
 			}
 		}
+		else if (isControls){
+			Controls::Draw(graphics);
+		}
 		else{
 			menu.Draw(graphics);
 		}
-
-		Debug::DrawValue(graphics, 400, 200, Obstacles::_d1);
-		Debug::DrawValue(graphics, 400, 220, Obstacles::_d2);
 	}
 }
 

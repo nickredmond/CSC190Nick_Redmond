@@ -20,8 +20,10 @@ public:
 	bool isFacingRight;
 	bool isScrolling;
 	ProjectileType _type;
+	int score;
 
 	Player(){
+		score = 0;
 		_type = ProjectileType::NONE; // ProjectileType::NONE;
 		numLines = 8;
 		lines = new Vector2[numLines];
