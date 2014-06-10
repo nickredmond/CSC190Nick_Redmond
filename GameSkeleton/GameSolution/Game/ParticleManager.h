@@ -7,6 +7,9 @@
 
 using std::vector;
 
+const int INFO_SIZE = 20;
+const int WARNING_SIZE = 50;
+
 class ParticleManager{
 private:
 	vector<ParticleEffect*> particleEffects;
@@ -52,6 +55,13 @@ public:
 			iter != deletedEffects.end(); iter++){
 				ParticleEffect* nextEffect = *iter;
 				RemoveEffect(nextEffect);
+		}
+
+		if(particleEffects.size() >= WARNING_SIZE){
+			LOG(Info, "Particle manager contains too many particle effects. Performance will likely be slow.");
+		}
+		else if (particleEffects.size() >= INFO_SIZE){
+			LOG(Warning, "Particle manager contains large quantity of particle effects. Performance may be affected.");
 		}
 	}
 	void Draw(Core::Graphics& graphics){

@@ -6,7 +6,6 @@
 #include "Utils.h"
 
 using Core::RGB;
-using Utils::ColorChangeType;
 
 class Particle{
 private:

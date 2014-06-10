@@ -12,25 +12,10 @@ const float MAX_R_DEFAULT = 15.0f;
 
 class BubbleEffect : public ParticleEffect{
 private:
-	Vector2 position;
 	float minVelocity, maxVelocity, _angle, _variance, minRadius, maxRadius;
 	bool _isThrusting;
 	// (2 PI) / (2 PI r)
 
-	void Draw_MidpointCircle(Core::Graphics& graphics, float radius, Vector2 position){
-		// float circumference = 2 * Utils::PI * radius;
-		float radiansPerInc = 1.0f / radius; //(2 * Utils::PI) / circumference;
-		float angle = 0.0f;
-
-		do{
-			Vector2 translation = Utils::randomUnitVector() * radius;
-			Vector2 pixelPos = position + translation;
-			graphics.DrawLine(pixelPos.x - 1, pixelPos.y, (pixelPos.x + 1), pixelPos.y);
-			graphics.DrawLine(pixelPos.x, pixelPos.y - 1, pixelPos.x , pixelPos.y + 1);
-
-			angle += radiansPerInc;
-		}while(angle < (2.0f * Utils::PI));
-	}
 public:
 	BubbleEffect(float dragCoeff, float decceleration, ColorChangeType type,
 		Vector2 startPos, float variance, float angle, float minVel, float maxVel, float minR = MIN_R_DEFAULT, float maxR = MAX_R_DEFAULT, int numberOfParticles = 1000)
@@ -65,7 +50,7 @@ public:
 		for (int i = 0; i < numParticles; i++){
 			if (particles[i].IsAlive()){
 				graphics.SetColor(particles[i].GetColor());
-				Draw_MidpointCircle(graphics, particles[i].radius, particles[i].position);
+				Utils::Draw_MidpointCircle(graphics, particles[i].radius, particles[i].position);
 			}
 		}
 	}

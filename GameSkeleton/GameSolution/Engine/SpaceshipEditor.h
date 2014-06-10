@@ -17,7 +17,7 @@ private:
 	bool isDrawingLine;
 	Vector2 mousePos;
 	vector<Vector2*> lines;
-	Spaceship ship;
+	GameObject* obj;
 	Vector2* lineStart;
 	Vector2 currentMousePos;
 	Vector2 origin;
@@ -62,7 +62,6 @@ private:
 public:
 	SpaceshipEditor(int screenWidth, int screenHeight){
 		origin = Vector2(float(screenWidth / 2), float(screenHeight / 2));
-		ship = Spaceship(20, 20);
 
 		lineStart = new Vector2();
 
@@ -85,7 +84,7 @@ public:
 		if (!wasClicking && saveButton.IsPressed()){
 			int index = 0;
 
-			ship.SetNumberLines(lines.size());
+			obj->SetNumberLines(lines.size());
 			for(vector<Vector2*>::iterator iter = lines.begin(); iter != lines.end(); iter+=2){
 				Vector2* startPtr = *iter;
 				Vector2* endPtr = *(iter+1);
@@ -95,7 +94,7 @@ public:
 				Vector2 normalizedStart = Vector2((start.x - origin.x), (start.y - origin.y));
 				Vector2 normalizedEnd = Vector2((end.x - origin.x), (end.y - origin.y));
 
-				ship.SetLine(index, normalizedStart, normalizedEnd);
+				obj->SetLine(index, normalizedStart, normalizedEnd);
 
 				index+=2;
 			}	
@@ -195,9 +194,14 @@ public:
 	bool IsSpaceshipReady(){
 		return hasSpaceship;
 	}
-	Spaceship GetSpaceship(){
-		return ship;
+
+	void SaveObject(){
+
 	}
+
+	//GameObject* GetSpaceship(){
+	//	return obj;
+	//}
 };
 
 #endif

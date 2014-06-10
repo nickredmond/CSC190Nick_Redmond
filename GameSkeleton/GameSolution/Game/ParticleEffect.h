@@ -5,11 +5,11 @@
 #include "Core.h"
 #include "Utils.h"
 
-using Utils::ColorChangeType;
 const float MIN_VEL = 0.001f;
 
 class ParticleEffect{
 protected:
+	Vector2 position;
 	Particle* particles;
 	ColorChangeType colorChange;
 	float drag, deccel;
@@ -33,6 +33,13 @@ public:
 	}
 	int GetNrParticles(){
 		return numParticles;
+	}
+	Vector2 GetPosition(){
+		return position;
+	}
+	void SetPosition(Vector2 pos){
+		position.x = pos.x;
+		position.y = pos.y;
 	}
 
 	virtual bool Update(float dt) = 0;

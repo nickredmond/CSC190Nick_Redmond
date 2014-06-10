@@ -1,83 +1,148 @@
 #ifndef WALL_H
 #define WALL_H
 
-#include "Spaceship.h"
+#include "MoveablleObject.h"
 
 namespace Obstacles
 {
+	float _d1;
+	float _d2;
+
 	const float BOUNCE_COEFF = 0.7f;
 	const float NUM_WALLS = 4;
+	const float PLATFORM_VELOCITY = 50.0f;
 
-	class Wall{
+	class Wall : public MoveableObject{
+	private:
+		Vector2 shift;
+		Vector2* path;
+		int numberPoints;
+		bool isLerping;
+		float xDiff, yDiff, beta;
+		int currentPathLegIndex;
+
+		int GetNextIndex(int index){
+			return (index < numberPoints - 1) ? index + 1 : 0;
+		}
 	public:
 		Vector2 v1, v2;
 
-		Wall(Vector2 _v1, Vector2 _v2){
+		Wall(Vector2 _v1, Vector2 _v2, bool _isLerping = false){
 			v1 = _v1;
 			v2 = _v2;
+
+			xDiff = v2.x - v1.x;
+			yDiff = v2.y - v1.y;
+			currentPathLegIndex = 0;
+			beta = 0.0f;
+
+			isLerping = _isLerping;
+			numberPoints = 0;
+			path = new Vector2[1];
+			velocity = Vector2(PLATFORM_VELOCITY, 0.0f);
 		}
 		Wall(){
 
+		}
+
+		bool IsLerping(){
+			return isLerping;
+		}
+		void Shift(Vector2 _shift){
+			shift.x += _shift.x;
+			shift.y += _shift.y;
+		}
+		void AddPathPoint(Vector2 point){
+			Vector2* currentPath = path;
+			numberPoints++;
+
+			path = new Vector2[numberPoints];
+
+			for (int i = 0; i < numberPoints - 1; i++){
+				path[i] = currentPath[i];
+			}
+			path[numberPoints - 1] = point;
+
+			if (numberPoints == 1){
+				v1 = point;
+				v2.x = v1.x + xDiff;
+				v2.y = v1.y + xDiff;
+			}
 		}
 
 		Vector2 normalizedPerp(){
 			Vector2 p = v2 - v1;
 			p = p.normalized();
 			return p.perpCCW();
+		}		
+		
+		bool Update(float dt){
+			dt;
+
+			if (isLerping){
+				float distanceTraveled = velocity.length() * dt;
+				float legDistance = distance(path[currentPathLegIndex], path[GetNextIndex(currentPathLegIndex)]);
+				float deltaBeta = distanceTraveled / legDistance;
+
+				if (beta + deltaBeta >= 1){
+					beta = deltaBeta - (1 - beta);
+					currentPathLegIndex = GetNextIndex(currentPathLegIndex);
+				}
+				else beta += deltaBeta;
+
+				Vector2 start = path[currentPathLegIndex];
+				Vector2 end = path[GetNextIndex(currentPathLegIndex)];
+
+				position = LERP(start, end, beta) + shift;
+			}
+
+			return true;
+		}
+		void Draw(Core::Graphics& graphics){
+			if (isLerping){
+				v1 = position;
+				v2.x = v1.x + xDiff;
+				v2.y = v1.y + yDiff;
+			}
+
+			graphics.DrawLine(v1.x, v1.y, v2.x, v2.y);
 		}
 	};
 
-	Wall* GetWalls(){
-		Wall walls[4];
-
-		walls[0] = Wall(Vector2(500, 0), Vector2(800, 200));
-		walls[1] = Wall(Vector2(0, 400), Vector2(500, 0));
-		walls[2] = Wall(Vector2(300, 600), Vector2(0, 400));
-		walls[3] = Wall(Vector2(800, 200), Vector2(300, 600));
-
-		Wall* wallPtr = walls;
-		return wallPtr;
-	}
-
-	void DrawWalls(Core::Graphics& graphics){
-		Wall* walls = GetWalls();
-
-		//for (int i = 0; i < sizeof(walls) / sizeof(Wall); i++){
-		//	Wall nextWall = walls[i];
-		//	graphics.DrawLine(nextWall.v1.x, nextWall.v1.y, nextWall.v2.x, nextWall.v2.y);
-		//}
-
-		Wall wall1 = walls[0];
-		Wall wall2 = walls[1];
-		Wall wall3 = walls[2];
-		Wall wall4 = walls[3];
-		
-		graphics.DrawLine(wall1.v1.x, wall1.v1.y, wall1.v2.x, wall1.v2.y);
-		graphics.DrawLine(wall2.v1.x, wall2.v1.y, wall2.v2.x, wall2.v2.y);
-		graphics.DrawLine(wall3.v1.x, wall3.v1.y, wall3.v2.x, wall3.v2.y);
-		graphics.DrawLine(wall4.v1.x, wall4.v1.y, wall4.v2.x, wall4.v2.y);
-	}
-
-	bool IsCollision(Spaceship& ship, Wall& wall, float dt){
-		Vector2 n = wall.normalizedPerp();
-
-		Vector2 q1 = ship.GetPosition() - wall.v1;
-		float d1 = q1.dotProduct(n);
-
-		Vector2 afterPos = ship.GetPosition() + (ship.GetVelocity() * dt);
-		Vector2 q2 = afterPos - wall.v1;
-		float d2 = q2.dotProduct(n);
-
-		return (d1 > 0 && d2 < 0);
-	}
-
-	void RespondToCollisions(Spaceship& ship, Wall& wall){
-		Vector2 n = wall.normalizedPerp();
-		Vector2 vel = ship.GetVelocity();
-		Vector2 newVelocity = vel - ((1.0f + BOUNCE_COEFF) * vel.dotProduct(n) * n);
-
-		ship.SetVelocity(newVelocity.x, newVelocity.y);
-	}
+//	void Draw(Core::Graphics& graphics){
+//		graphics.DrawLine(top.x, top.y, right.x, right.y);
+//		graphics.DrawLine(right.x, right.y, bottom.x, bottom.y);
+//		graphics.DrawLine(bottom.x, bottom.y, left.x, left.y);
+//		graphics.DrawLine(left.x, left.y, top.x, top.y);
+//	}
+//	void Update(float dt, Vector2 shipPos){
+//		if (isLerping){
+//			float distanceTraveled = velocity.length() * dt;
+//			float legDistance = distance(path[currentPathLegIndex], path[GetNextIndex(currentPathLegIndex)]);
+//			float deltaBeta = distanceTraveled / legDistance;
+//
+//			if (beta + deltaBeta >= 1){
+//				beta = deltaBeta - (1 - beta);
+//				currentPathLegIndex = GetNextIndex(currentPathLegIndex);
+//			}
+//			else beta += deltaBeta;
+//
+//			Vector2 start = path[currentPathLegIndex];
+//			Vector2 end = path[GetNextIndex(currentPathLegIndex)];
+//
+//			Vector2 currentPos = LERP(start, end, beta);
+//			SetPosition(currentPos);
+//		}
+//		else{
+//			Vector2 shipMinusPos = shipPos - position;
+//			Vector2 newVel = shipMinusPos.normalized() * DEFAULT_ACCEL;
+//			velocity.x = newVel.x;
+//			velocity.y = newVel.y;
+//
+//			Vector2 pos = position + velocity;
+//			SetPosition(pos);
+//		}
+//	}
 }
 
 #endif

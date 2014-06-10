@@ -8,64 +8,12 @@
 using Core::Input;
 //using namespace Obstacles;
 
+const float E = 2.718f;
+const float PI = 3.14159265f;
+
+enum ColorChangeType { FIRE, EXPLOSION, BUBBLE, RANDOM };
+
 namespace Utils{
-	const char TOGGLE_KEY = 'Q';
-	const char BG_TOGGLE_KEY = 'E';
-	const float E = 2.718f;
-	const float PI = 3.14159265f;
-
-	static bool isDisplayed;
-	static bool wasToggled;
-
-	static bool isVisible;
-	static bool wasBgToggled;
-
-	class Controls{
-	public:
-
-		static void ToggleVisibility(){
-			isDisplayed = !isDisplayed;
-		}
-		static void Draw(int x, int y, Core::Graphics& graphics){
-			if (isDisplayed){
-				graphics.DrawString(x, y, "SPACESHIP CONTROLS");
-				graphics.DrawString(x, y + 20, "W = Forward, S = Backward");
-				graphics.DrawString(x, y + 40, "A = Rotate Left, D = Rotate Right");
-				graphics.DrawString(x, y + 60, "Press left mouse button to fire missiles.");
-			}
-			else graphics.DrawString(730, 30, "Press 'Q' for controls.");
-		}
-		static void Update(){
-			if (Input::IsPressed(TOGGLE_KEY) && !wasToggled){
-				Controls::ToggleVisibility();
-			}
-
-			wasToggled = Input::IsPressed(TOGGLE_KEY);
-		}
-	};
-
-	class BackgroundObjects{
-	public:
-
-		static void ToggleVisibility(){
-			isVisible = !isVisible;
-		}
-		static void Draw(Core::Graphics& graphics){
-			if (!isVisible){
-				graphics.DrawString(730, 55, "Press 'E' to display background objects.");
-			}
-		}
-		static void Update(){
-			if (Input::IsPressed(BG_TOGGLE_KEY) && !wasBgToggled){
-				BackgroundObjects::ToggleVisibility();
-			}
-
-			wasBgToggled = Input::IsPressed(BG_TOGGLE_KEY);
-		}
-	};
-
-	enum ColorChangeType { FIRE, EXPLOSION, BUBBLE, RANDOM };
-
 	float randomFloat(){
 		return float(rand()) / RAND_MAX;
 	}
@@ -103,6 +51,21 @@ namespace Utils{
 
 	float Perimeter(float width, float height){
 		return (2 * width) + (2 * height);
+	}
+
+	void Draw_MidpointCircle(Core::Graphics& graphics, float radius, Vector2 position){
+		// float circumference = 2 * Utils::PI * radius;
+		float radiansPerInc = 1.0f / radius; //(2 * Utils::PI) / circumference;
+		float angle = 0.0f;
+
+		do{
+			Vector2 translation = Utils::randomUnitVector() * radius;
+			Vector2 pixelPos = position + translation;
+			graphics.DrawLine(pixelPos.x - 1, pixelPos.y, (pixelPos.x + 1), pixelPos.y);
+			graphics.DrawLine(pixelPos.x, pixelPos.y - 1, pixelPos.x , pixelPos.y + 1);
+
+			angle += radiansPerInc;
+		}while(angle < (2.0f * PI));
 	}
 }
 

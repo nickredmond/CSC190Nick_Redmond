@@ -12,6 +12,7 @@
 #include "Input.h"
 #define PROFILING_ENABLED
 #define LOG_ON
+#define ASSERT_ON
 
 namespace Core
 {

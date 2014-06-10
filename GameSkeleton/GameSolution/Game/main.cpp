@@ -1,14 +1,15 @@
-#include "Asteroid.h"
-#include "HierarchialTransform.h"
-#include "EnemyManager.h"
 #include "Wall.h"
 #include "ExplosionEffect.h"
 #include "BubbleEffect.h"
-#include "StarryNight.h"
 #include "Logger.h"
-
 #include "AutoProfile.h"
 #include "SpaceshipEditor.h"
+
+#include "Player.h"
+#include "UpdateFunctions.h"
+#include "Collisions.h"
+#include "Level.h"
+#include "MainMenu.h"
 
 using Core::Input;
 using namespace Obstacles;
@@ -17,18 +18,42 @@ using namespace Utils;
 const int SCREEN_WIDTH = 1024;
 const int SCREEN_HEIGHT = 768;
 
-Asteroid asteroid(Vector2(50, 30));
-ParticleManager manager;
-EnemyManager em;
-StarryNight bgStars(SCREEN_WIDTH, SCREEN_HEIGHT, 100, 0.5f);
+const int NO_SELECTION = -1;
+const int START_GAME = 0;
+const int CONTROLS = 1;
 
 Core::RGB defaultColor = RGB(255, 255, 255);
-Spaceship ship(20, 20);
 
 Timer time = Timer(0.5f);
 SpaceshipEditor editor = SpaceshipEditor(SCREEN_WIDTH, SCREEN_HEIGHT);
+MainMenu menu(Vector2(float(SCREEN_WIDTH / 2), float(SCREEN_HEIGHT / 2)));
+
+ParticleManager* manager = new ParticleManager();
+Level lvl;
+int currentLevelIndex = 0;
+int numberLevels = 1;
+Level* levels;
+bool isMainMenu = false;
 
 bool isEditingSpaceship;
+
+void ResetLevel(){
+	lvl = GetDefaultLevel(SCREEN_WIDTH, manager);
+	lvl.screenWidth = SCREEN_WIDTH;
+	lvl.screenHeight = SCREEN_HEIGHT;
+}
+
+void UpdateGameState(){
+	if (isMainMenu){
+		int menuChoice = menu.GetSelectedItem();
+
+		if (menuChoice == START_GAME){
+			ResetLevel();
+			menu.Reset();
+			isMainMenu = false;
+		}
+	}
+}
 
 bool Update(float dt){dt;
 	if (isEditingSpaceship){
@@ -38,66 +63,25 @@ bool Update(float dt){dt;
 			isEditingSpaceship = false;
 
 			if (editor.IsSpaceshipReady()){
-				ship = editor.GetSpaceship();
+		//		ship = editor.GetSpaceship();
 			}
 
 			editor.Reset();
 		}
 	}
 	else{
-		{
-			PROFILE("SpaceshipUpdate");
-			UpdateShipBehavior();
-			UpdateSelectedWeapon(ship);
-			ship.prev_dt = dt;
-			UpdateShipPosition(ship, dt);
-		}
+		if(!isMainMenu){
+			lvl.Update(dt);
+			manager->Update(false, 0.0f, Vector2(), dt);
 
-		{
-			PROFILE("CollisionUpdate");
-			bool isCollision = shipUpdateFn(ship, SCREEN_WIDTH, SCREEN_HEIGHT, dt);
-
-			if (isCollision){
-				ParticleEffect* explosion = new ExplosionEffect(0.15f, 0.1f, ColorChangeType::FIRE,
-					ship.GetPosition(), 1.0f, 10.0f, 215);
-				manager.AddEffect(explosion);
+			if (lvl.IsWin() || lvl.IsGameOver()){
+				isMainMenu = true;
 			}
 		}
-
-		{
-			PROFILE("ProjectilesUpdate");
-			UpdateBullets(dt);
+		else{
+			menu.Update(dt);
+			UpdateGameState();
 		}
-
-		{
-			PROFILE("BackgroundUpdate");
-
-			Utils::BackgroundObjects::Update();
-			if (Utils::isVisible){
-				for (int i = 0; i <= MAX_BG_INDEX; i++){
-					bgObjects[i].Update(dt);
-				}
-			}
-
-			bgStars.Update(dt);
-		}
-
-		{
-			PROFILE("ParticlesUpdate");
-			manager.Update(Input::IsPressed('W'), ship.angle, ship.GetPosition(), dt);
-		}
-
-		asteroid.Update(dt, ship.GetPosition());
-		Utils::Controls::Update();
-
-		{
-			PROFILE("EnemiesUpdate");
-			em.Update(ship, dt);
-		}
-
-		time.Update(dt, true);
-
-		wasMousePressed = Input::IsPressed(Input::BUTTON_LEFT);
 	}
 
 	if (Input::IsPressed('O')){
@@ -120,116 +104,41 @@ void Draw(Core::Graphics& graphics){
 	else{
 		graphics.SetColor(defaultColor);
 
-		graphics.DrawString(20, 110, "Cycle ship collision modes with [F1, F2, F3]");
-		graphics.DrawString(30, 130, updateBehaviorTitle);
-		graphics.DrawString(20, 150, "Cycle weaponse with [1, 2, 3]");
-		graphics.DrawString(30, 170, currentWeaponTitle);
-
-		Turret gun = ship.GetTurret();
-		if (gun.isReloading){
-			graphics.DrawString(30, 190, "[Reloading:");
-			Debug::DrawValue(graphics, 120, 190, Debug::Debug_RoundValue(gun.reloadPercent * 100));
-			graphics.DrawString(170, 190, "%]");
+		if(!isMainMenu){
+			{
+				PROFILE("LevelDraw");
+				lvl.Draw(graphics);
+			}
+			{
+				PROFILE("ParticlesDraw");
+				manager->Draw(graphics);
+			}
 		}
 		else{
-			graphics.DrawString(30, 190, "AMMO:");
-			Debug::DrawValue(graphics, 70, 190, float(gun.GetMagazineAmmo()));
-			graphics.DrawString(90, 190, "/");
-			Debug::DrawValue(graphics, 105, 190, float(gun.GetTotalAmmo()));
+			menu.Draw(graphics);
 		}
 
-		{
-			PROFILE("SpaceshipDraw");
-			ship.Draw(graphics);
-		}
-
-		Obstacles::DrawWalls(graphics);
-		asteroid.Draw(graphics);
-
-		Utils::Controls::Draw(350, 280, graphics);
-
-		time.Draw(graphics);
-
-		{
-			PROFILE("BackgroundDraw");
-
-			if (Utils::isVisible){
-				for (int i = 0; i <= MAX_BG_INDEX; i++){
-					bgObjects[i].Draw(graphics);
-				}
-			}
-			else Utils::BackgroundObjects::Draw(graphics);
-
-			bgStars.Draw(graphics);
-		}
-
-		{
-			PROFILE("ProjectilesDraw");
-			for (int i = 0; i <= MAX_BULLET_INDEX; i++){
-				if (bullets[i].isVisible){
-					bullets[i].Draw(graphics);
-				}
-			}
-		}
-
-		{
-			PROFILE("ParticlesDraw");
-			manager.Draw(graphics);
-		}
-
-		{
-			PROFILE("EnemiesDraw");
-			em.Draw(graphics);
-		}
+		Debug::DrawValue(graphics, 400, 200, Obstacles::_d1);
+		Debug::DrawValue(graphics, 400, 220, Obstacles::_d2);
 	}
 }
 
 int main()
 {
-	profiler.AddCategory("SpaceshipUpdate");
-	profiler.AddCategory("CollisionUpdate");
+	profiler.AddCategory("LevelUpdate");
+	profiler.AddCategory("LevelDraw");
 	profiler.AddCategory("ParticlesUpdate");
-	profiler.AddCategory("ProjectilesUpdate");
-	profiler.AddCategory("BackgroundUpdate");
-	profiler.AddCategory("EnemiesUpdate");
-
-	profiler.AddCategory("SpaceshipDraw");
-	profiler.AddCategory("ProjectilesDraw");
-	profiler.AddCategory("BackgroundDraw");
 	profiler.AddCategory("ParticlesDraw");
-	profiler.AddCategory("EnemiesDraw");
 
-	bullets = new Bullet[MAX_BULLET_INDEX + 1];
-
-	for (int i = 0; i < MAX_BULLET_INDEX + 1; i++){
-		bullets[i] = Bullet();
-	}
-
-	em = EnemyManager(manager, bullets, 10, 0.5f, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-	asteroid.SetVelocity(100.2f, 100.2f);
-	ship.SetPosition(Vector2(400, 400), Vector2(float(Input::GetMouseX()), float(Input::GetMouseY())), 0.0f);
-
-	BubbleEffect* bubbles = new BubbleEffect(0.08f, 0.05f, ColorChangeType::FIRE, 
-		Vector2(220, 220), 0.01f, 0.1f, 6.0f, 18.0f, 1.0f, 5.0f, 125);
-	manager.AddEffect(bubbles);
-
-	shipUpdateFn = Update_ScreenWrap;
-	updateBehaviorTitle = "CURRENT MODE: Screen Wrap";
-	currentWeaponTitle = "CURRENT WEAPON: Single Shot";
-
-	Utils::isDisplayed = false;
-	Utils::wasToggled = false;
-	Utils::isVisible = false;
-	Utils::wasBgToggled = false;
-
-	SetupBgObjects();
+	isMainMenu = true;
+	LOG(Info, "Game initialized");
 
 	Core::Init( "Game Demo", SCREEN_WIDTH, SCREEN_HEIGHT);
 	Core::RegisterUpdateFn(Update);
 	Core::RegisterDrawFn(Draw);
 	Core::GameLoop();
 
-	LOG(Info, "Game initialized");
+//	bool test = false;
+//	ASSERT(test, "Test :: If this line gets written, then the assertion system works correctly.");
 }
 

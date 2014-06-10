@@ -6,7 +6,6 @@
 
 class ExplosionEffect : public ParticleEffect{
 private:
-	Vector2 position;
 	float minVelocity, maxVelocity;
 public:
 	ExplosionEffect(float dragCoeff, float decceleration, ColorChangeType type,
