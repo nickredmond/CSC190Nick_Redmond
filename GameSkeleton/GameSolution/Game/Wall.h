@@ -2,6 +2,8 @@
 #define WALL_H
 
 #include "MoveablleObject.h"
+#include "Assertions.h"
+#include "Logger.h"
 
 namespace Obstacles
 {

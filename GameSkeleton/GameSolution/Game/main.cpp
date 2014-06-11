@@ -139,6 +139,9 @@ void Draw(Core::Graphics& graphics){
 
 int main()
 {
+	bool test = false;
+	ASSERT(test, "Test :: If this line gets written, then the assertion system works correctly.");
+
 	profiler.AddCategory("LevelUpdate");
 	profiler.AddCategory("LevelDraw");
 	profiler.AddCategory("ParticlesUpdate");
@@ -151,8 +154,5 @@ int main()
 	Core::RegisterUpdateFn(Update);
 	Core::RegisterDrawFn(Draw);
 	Core::GameLoop();
-
-//	bool test = false;
-//	ASSERT(test, "Test :: If this line gets written, then the assertion system works correctly.");
 }
 
