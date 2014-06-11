@@ -2,6 +2,7 @@
 #define BLOCK_H
 
 #include "NullItem.h"
+#include "DebugMemory.h"
 
 const float BLOCK_ACCEL = 485.0f;
 

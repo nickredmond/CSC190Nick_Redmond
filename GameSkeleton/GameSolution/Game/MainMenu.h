@@ -2,6 +2,7 @@
 #define MAINMENU_H
 
 #include "GameObject.h"
+#include "DebugMemory.h"
 
 const int PER_LINE_INCREASE = 25;
 

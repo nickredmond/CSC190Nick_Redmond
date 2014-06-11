@@ -10,6 +10,7 @@
 #include "Weapon.h"
 #include "ItemBox.h"
 #include "Assertions.h"
+#include "DebugMemory.h"
 
 using Obstacles::Wall;
 

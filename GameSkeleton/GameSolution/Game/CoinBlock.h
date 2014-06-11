@@ -4,6 +4,7 @@
 #include "Block.h"
 #include "Coin.h"
 #include "Item.h"
+#include "DebugMemory.h"
 
 class CoinBlock : public Block{
 private:

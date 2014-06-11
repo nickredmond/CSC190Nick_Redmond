@@ -1,3 +1,5 @@
+#pragma warning ( disable : 4127)
+
 #include "Wall.h"
 #include "ExplosionEffect.h"
 #include "BubbleEffect.h"
@@ -139,8 +141,10 @@ void Draw(Core::Graphics& graphics){
 
 int main()
 {
-	bool test = false;
-	ASSERT(test, "Test :: If this line gets written, then the assertion system works correctly.");
+	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+	//-- ASSERTION TEST --//
+	 ASSERT(false, "Test :: If this line gets written, then the assertion system works correctly.");
 
 	profiler.AddCategory("LevelUpdate");
 	profiler.AddCategory("LevelDraw");
@@ -156,3 +160,4 @@ int main()
 	Core::GameLoop();
 }
 
+#pragma warning ( default : 4127)
