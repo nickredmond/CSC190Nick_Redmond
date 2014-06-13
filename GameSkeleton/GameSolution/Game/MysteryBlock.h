@@ -3,6 +3,7 @@
 
 #include "Block.h"
 #include "NullItem.h"
+#include "DebugMemory.h"
 
 class MysteryBlock : public Block{
 private:
@@ -24,6 +25,8 @@ public:
 		Item* result = new NullItem(false);
 
 		if (hasItem){
+			delete result;
+
 			result = currentItem;
 			hasItem = false;
 
@@ -31,6 +34,14 @@ public:
 		}
 
 		return result;
+	}
+	
+	void Destroy(){
+		if (hasItem){
+			currentItem->Destroy();
+			delete currentItem;
+		}
+		delete [] lines;
 	}
 	
 	bool Update(float dt){

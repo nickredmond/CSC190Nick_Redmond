@@ -19,8 +19,7 @@ namespace Collisions{
 		bool isCollision = (box.GetPosition() - plyr.GetPosition()).length() < box.radius;
 
 		if (isCollision){
-			Item* item = box.Hit();
-			item;
+			Item* item = box.Hit();item;
 		}
 
 		return isCollision;
@@ -96,6 +95,7 @@ namespace Collisions{
 				manager;
 
 				if (item->IsInitialized()){
+					delete items[itemIndex];
 					items[itemIndex] = item;
 					itemIndex = (itemIndex < numberItems - 1) ? itemIndex + 1 : 0;
 					itemIncrement++;
@@ -104,6 +104,7 @@ namespace Collisions{
 						obj.score = obj.score + 1;
 					}
 				}
+				else delete item;
 			}
 		}
 

@@ -42,9 +42,8 @@ bool isControls = false;
 bool isEditingSpaceship;
 
 void ResetLevel(){
-	lvl = GetDefaultLevel(SCREEN_WIDTH, manager);
-	lvl.screenWidth = SCREEN_WIDTH;
-	lvl.screenHeight = SCREEN_HEIGHT;
+	lvl.End();
+	lvl = GetDefaultLevel(SCREEN_WIDTH, SCREEN_HEIGHT, manager);
 }
 
 void UpdateGameState(){
@@ -137,6 +136,15 @@ void Draw(Core::Graphics& graphics){
 			menu.Draw(graphics);
 		}
 	}
+
+	Debug::DrawMemoryState(graphics, SCREEN_HEIGHT);
+}
+
+void Shutdown(){
+	editor.Destroy();
+	lvl.End();
+	delete manager;
+	menu.Destroy();
 }
 
 int main()
@@ -144,7 +152,7 @@ int main()
 	_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
 	//-- ASSERTION TEST --//
-	 ASSERT(false, "Test :: If this line gets written, then the assertion system works correctly.");
+	// ASSERT(false, "Test :: If this line gets written, then the assertion system works correctly.");
 
 	profiler.AddCategory("LevelUpdate");
 	profiler.AddCategory("LevelDraw");
@@ -158,6 +166,8 @@ int main()
 	Core::RegisterUpdateFn(Update);
 	Core::RegisterDrawFn(Draw);
 	Core::GameLoop();
+
+	Shutdown();
 }
 
 #pragma warning ( default : 4127)

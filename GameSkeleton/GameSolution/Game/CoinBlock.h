@@ -29,7 +29,8 @@ public:
 			currentCoin = Coin(position);
 			hasCoin = true;
 
-			super::Hit();
+			Item* temp = super::Hit();
+			delete temp;
 		}
 
 		Item* coin = new NullItem(initialized);

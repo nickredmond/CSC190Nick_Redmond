@@ -30,6 +30,9 @@ public:
 	void Reset(){
 		selectedItem = -1;
 	}
+	void Destroy(){
+		delete menuItems;
+	}
 
 	bool Update(float dt){
 		dt;

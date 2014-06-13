@@ -8,16 +8,18 @@ class Item : public MoveableObject{
 protected:
 	bool initialized;
 public:
-	bool isCoin;
+	bool isCoin, isNullItem;
 
 	Item(){
 		isCoin = false;
 		initialized = false;
+		isNullItem = false;
 	}
 	Item(bool init){
 		isCoin = false;
 		initialized = init;
 	}
+
 	bool IsInitialized(){
 		return initialized;
 	}

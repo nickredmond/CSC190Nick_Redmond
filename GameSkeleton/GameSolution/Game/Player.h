@@ -4,6 +4,7 @@
 #include "MoveablleObject.h"
 #include "Debug.h"
 #include "Weapon.h"
+#include "DebugMemory.h"
 using Core::Input;
 
 const float JUMP_VELOCITY = -400.0f;
@@ -24,7 +25,7 @@ public:
 
 	Player(){
 		score = 0;
-		_type = ProjectileType::NONE; // ProjectileType::NONE;
+		_type = ProjectileType::NONE;
 		numLines = 8;
 		lines = new Vector2[numLines];
 		radius = 15.0f;

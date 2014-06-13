@@ -4,6 +4,7 @@
 #include "Particle.h"
 #include "Core.h"
 #include "Utils.h"
+#include "DebugMemory.h"
 
 const float MIN_VEL = 0.001f;
 
@@ -23,6 +24,13 @@ public:
 		numParticles = numberOfParticles;
 
 		particles = new Particle[numParticles];
+	}
+	~ParticleEffect(){
+		int x = 0;
+		x;
+	}
+	void Destroy(){
+		delete [] particles;
 	}
 
 	Particle* GetParticles(){

@@ -9,6 +9,7 @@
 #include "MysteryBlock.h"
 #include "ItemBox.h"
 #include "Assertions.h"
+#include "DebugMemory.h"
 
 #include <vector>
 using std::vector;
@@ -19,7 +20,7 @@ const float WIN_TIME = 2.0f;
 
 class Level{
 private:
-	bool wasFiring, hasWon;
+	bool wasFiring, hasWon, hasManager;
 	int numberEnemies, numberWalls, numberBlocks, currentBlockIndex, currentEnemyIndex, currentWallIndex, currentItemIndex;
 	Wall* walls;
 	Enemy* enemies;
@@ -90,7 +91,7 @@ private:
 public:
 	int worldNr, levelNr, screenWidth, screenHeight;
 
-	Level(){}
+	Level(){hasManager = false;}
 
 	Level(int numEnemies, int numWalls, int numBlocks, Player _plyr, int width, ParticleManager* mgr){
 		bool isCorrectValues = ((numEnemies > 0) && (numWalls > 0) && (numBlocks > 0));
@@ -121,11 +122,48 @@ public:
 		timeSinceDeath = 0.0f;
 		timeSinceWin = 0.0f;
 
+		plyr.Destroy();
 		plyr = _plyr;
 		manager = mgr;
+		hasManager = true;
 
 		wasFiring = false;
 		hasWon = false;
+	}
+
+	void End(){
+		plyr.Destroy();
+		winBox.Destroy();
+		if (hasManager){
+			manager->Reset();
+		}
+
+		for (int i = 0; i < numberWalls; i++){
+			walls[i].Destroy();
+		}
+		for (int i = 0; i < numberEnemies; i++){
+			enemies[i].Destroy();
+		}
+		for (int i = 0; i < numberBlocks; i++){
+			Block* nextBlock = blocks[i];
+			nextBlock->Destroy();
+			delete nextBlock;
+		}
+		for (int i = 0; i < numberBlocks; i++){
+			Item* nextItem = items[i];
+			if (nextItem->IsInitialized() && !nextItem->isNullItem){
+				nextItem->Destroy();
+			}
+			delete nextItem;
+		}
+
+		activeProjectiles.clear();
+		vector<Weapon*>().swap(activeProjectiles);
+
+		delete [] walls;
+		delete [] enemies;
+		delete [] blocks;
+		delete [] items;
 	}
 
 	void SetItemBox(ItemBox box){
@@ -315,7 +353,10 @@ public:
 		vector<Weapon*>::iterator iter = activeProjectiles.begin(); 
 		while(iter != activeProjectiles.end() && !found && (index < activeProjectiles.size())){
 			if (p == *iter){
+				p->Destroy();
 				iter = activeProjectiles.erase(iter);
+				delete p;
+
 				found = true;
 			}
 			else iter = activeProjectiles.begin() + index;
@@ -325,7 +366,7 @@ public:
 	}
 };
 
-Level GetDefaultLevel(int screenWidth, ParticleManager* manager){
+Level GetDefaultLevel(int screenWidth, int screenHeight, ParticleManager* manager){
 	Player plyr = Player();
 
 	int numEnemies = 3;
@@ -370,7 +411,12 @@ Level GetDefaultLevel(int screenWidth, ParticleManager* manager){
 	ItemBox box = ItemBox(Vector2(float(screenWidth + 800), 300.0f));
 	lvl.SetItemBox(box);
 
-	LOG(Info, "Initialized default level.");
+	lvl.screenWidth = screenWidth;
+	lvl.screenHeight = screenHeight;
+
+	delete [] walls;
+
+//	LOG(Info, "Initialized default level.");
 	return lvl;
 }
 

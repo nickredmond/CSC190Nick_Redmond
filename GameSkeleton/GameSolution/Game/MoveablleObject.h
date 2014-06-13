@@ -18,9 +18,6 @@ public:
 	MoveableObject(){
 		omega = 0.05f;
 	}
-	//~MoveableObject(){
-	//	delete [] lines;
-	//}
 
 	void SetVelocity(float xVel, float yVel){
 		velocity.x = xVel;

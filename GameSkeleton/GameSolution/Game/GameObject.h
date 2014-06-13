@@ -3,6 +3,7 @@
 
 #include "Vector2.h"
 #include "Core.h"
+#include "DebugMemory.h"
 
 class GameObject{
 protected:
@@ -17,6 +18,10 @@ public:
 	virtual bool Update(float dt) = 0;
 	virtual void Draw(Core::Graphics& graphics) = 0;
 	
+	virtual void Destroy(){
+		delete [] lines;
+	}
+
 	Vector2 GetPosition(){
 		return position;
 	}

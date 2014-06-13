@@ -4,6 +4,7 @@
 #include "MoveablleObject.h"
 #include "Assertions.h"
 #include "Logger.h"
+#include "DebugMemory.h"
 
 namespace Obstacles
 {
@@ -28,6 +29,10 @@ namespace Obstacles
 		}
 	public:
 		Vector2 v1, v2;
+
+		void Destroy(){
+			delete [] path;
+		}
 
 		Wall(Vector2 _v1, Vector2 _v2, bool _isLerping = false){
 			v1 = _v1;
@@ -70,6 +75,8 @@ namespace Obstacles
 				v2.x = v1.x + xDiff;
 				v2.y = v1.y + xDiff;
 			}
+
+			delete [] currentPath;
 		}
 
 		Vector2 normalizedPerp(){
@@ -110,41 +117,6 @@ namespace Obstacles
 			graphics.DrawLine(v1.x, v1.y, v2.x, v2.y);
 		}
 	};
-
-//	void Draw(Core::Graphics& graphics){
-//		graphics.DrawLine(top.x, top.y, right.x, right.y);
-//		graphics.DrawLine(right.x, right.y, bottom.x, bottom.y);
-//		graphics.DrawLine(bottom.x, bottom.y, left.x, left.y);
-//		graphics.DrawLine(left.x, left.y, top.x, top.y);
-//	}
-//	void Update(float dt, Vector2 shipPos){
-//		if (isLerping){
-//			float distanceTraveled = velocity.length() * dt;
-//			float legDistance = distance(path[currentPathLegIndex], path[GetNextIndex(currentPathLegIndex)]);
-//			float deltaBeta = distanceTraveled / legDistance;
-//
-//			if (beta + deltaBeta >= 1){
-//				beta = deltaBeta - (1 - beta);
-//				currentPathLegIndex = GetNextIndex(currentPathLegIndex);
-//			}
-//			else beta += deltaBeta;
-//
-//			Vector2 start = path[currentPathLegIndex];
-//			Vector2 end = path[GetNextIndex(currentPathLegIndex)];
-//
-//			Vector2 currentPos = LERP(start, end, beta);
-//			SetPosition(currentPos);
-//		}
-//		else{
-//			Vector2 shipMinusPos = shipPos - position;
-//			Vector2 newVel = shipMinusPos.normalized() * DEFAULT_ACCEL;
-//			velocity.x = newVel.x;
-//			velocity.y = newVel.y;
-//
-//			Vector2 pos = position + velocity;
-//			SetPosition(pos);
-//		}
-//	}
 }
 
 #endif

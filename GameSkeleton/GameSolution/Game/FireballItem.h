@@ -2,6 +2,7 @@
 #define FBALL_ITEM_H
 
 #include "Item.h"
+#include "DebugMemory.h"
 
 class FireballItem : public Item{
 public:

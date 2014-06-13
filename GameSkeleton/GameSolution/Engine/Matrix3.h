@@ -8,13 +8,6 @@ class Matrix3{
 public:
 	float data[9];
 
-	//Vector2 col1;
-	//float z1;
-	//Vector2 col2;
-	//float z2;
-	//Vector2 col3; // bottom row is always 0,0,1
-	//float z3;
-
 	Matrix3(){
 		data[0] = 1;
 		data[1] = 0;
@@ -25,18 +18,6 @@ public:
 		data[6] = 0;
 		data[7] = 0;
 		data[8] = 1;
-
-		//col1.x = 1;
-		//col1.y = 0;
-		//col2.x = 0;
-		//col2.y = 1;
-
-		//col3.x = 0;
-		//col3.y = 0;
-
-		//z1 = 0;
-		//z2 = 0;
-		//z3 = 1;
 	}
 
 	Matrix3(Vector2 col_1, Vector2 col_2){
@@ -49,18 +30,6 @@ public:
 		data[6] = 0;
 		data[7] = 0;
 		data[8] = 1;
-
-		//col1.x = col_1.x;
-		//col1.y = col_1.y;
-		//col2.x = col_2.x;
-		//col2.y = col_2.y;
-
-		//col3.x = 0;
-		//col3.y = 0;
-
-		//z1 = 0;
-		//z2 = 0;
-		//z3 = 1;
 	}
 
 	static Matrix3 Rotation(float angle){
@@ -92,10 +61,6 @@ public:
 	}
 
 	Matrix3 Translate(float x, float y){
-		//Matrix3 matrix = Matrix3(Vector2(col1.x, col1.y), Vector2(col2.x, col2.y));
-		//matrix.col3.x += x;
-		//matrix.col3.y += y;
-
 		Matrix3 matrix = Matrix3(Vector2(data[0], data[3]), Vector2(data[1], data[4]));
 		matrix.data[2] = data[2] + x;
 		matrix.data[5] = data[5] + y;
@@ -103,10 +68,6 @@ public:
 		return matrix;
 	}
 	Matrix3 Translate(Vector2& t){
-		//Matrix3 matrix = Matrix3(Vector2(col1.x, col1.y), Vector2(col2.x, col2.y));
-		//matrix.col3.x += t.x;
-		//matrix.col3.y += t.y;
-
 		Matrix3 matrix = Matrix3(Vector2(data[0], data[3]), Vector2(data[1], data[4]));
 		matrix.data[2] += t.x;
 		matrix.data[5] += t.y;
@@ -118,15 +79,6 @@ public:
 // -- operators -- //
 
 Matrix3 operator*(const Matrix3 &left, const Matrix3 &right){
-	//float b11 = (left.col1.x * right.col1.x) + (left.col2.x * right.col1.y);
-	//float b12 = (left.col1.y * right.col1.x) + (left.col2.y * right.col1.y);
-	//float b21 = (left.col1.x * right.col2.x) + (left.col2.x * right.col2.y);
-	//float b22 = (left.col1.y * right.col2.x) + (left.col2.y * right.col2.y);
-
-	//Matrix3 result = Matrix3(Vector2(b11, b21), Vector2(b12, b22));
-	//result.col3.x = (left.col1.x * right.col3.x) + (left.col2.x * right.col3.y) + left.col3.x;
-	//result.col3.y = (left.col1.y * right.col3.x) + (left.col2.y * right.col3.y) + left.col3.y;
-
 	float b11 = (left.data[0] * right.data[0]) + (left.data[1] * right.data[3]);
 	float b12 = (left.data[3] * right.data[0]) + (left.data[4] * right.data[3]);
 	float b21 = (left.data[0] * right.data[1]) + (left.data[1] * right.data[4]);

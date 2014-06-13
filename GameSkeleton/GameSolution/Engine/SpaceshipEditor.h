@@ -5,6 +5,7 @@
 #include "Spaceship.h"
 #include "Core.h"
 #include "Button.h"
+#include "DebugMemory.h"
 #include <vector>
 
 using Core::Input;
@@ -75,6 +76,10 @@ public:
 		maxX = 0;
 		minY = 0;
 		maxY = 0;
+	}
+
+	void Destroy(){
+		delete lineStart;
 	}
 
 	void Update(){

@@ -4,6 +4,7 @@
 #include <vector>
 #include "ParticleEffect.h"
 #include "UpdateFunctions.h"
+#include "DebugMemory.h"
 
 using std::vector;
 
@@ -28,13 +29,21 @@ public:
 		vector<ParticleEffect*>::iterator iter = particleEffects.begin(); 
 		while(iter != particleEffects.end() && !found && (index < particleEffects.size())){
 			if (effect == *iter){
+				effect->Destroy();
 				iter = particleEffects.erase(iter);
+				delete effect;
+
 				found = true;
 			}
 			else iter = particleEffects.begin() + index;
 
 			index++;
 		}
+	}
+
+	void Reset(){
+		particleEffects.clear();
+		vector<ParticleEffect*>().swap(particleEffects);
 	}
 
 	void Update(bool isThrusting, float angle, Vector2 pos, float dt){

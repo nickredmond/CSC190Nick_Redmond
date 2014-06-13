@@ -2,6 +2,7 @@
 #define KOOPA_H
 
 #include "Enemy.h"
+#include "DebugMemory.h"
 
 class Koopa : public Enemy{
 public:

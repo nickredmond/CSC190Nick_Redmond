@@ -3,6 +3,7 @@
 
 #include "FireballItem.h"
 #include "GameObject.h"
+#include "DebugMemory.h"
 
 const int NUMBER_ITEMS = 1;
 const float ITEM_DECCEL = 0.05f;
@@ -11,11 +12,13 @@ const float ITEM_VEL = -10.0f;
 class ItemBox : public MoveableObject{
 private:
 	Item* items[NUMBER_ITEMS];
-	int currentItemIndex;
+	int currentItemIndex, numberItems;
 	bool isHit;
 	Vector2 velocity;
 public:
-	ItemBox(){}
+	ItemBox(){
+		numberItems = 0;
+	}
 
 	ItemBox(Vector2 pos){
 		isHit = false;
@@ -47,7 +50,18 @@ public:
 		position.y = pos.y;
 
 		currentItemIndex = 0;
+		numberItems = NUMBER_ITEMS;
 		items[0] = new FireballItem(position);
+	}
+
+	void Destroy(){
+		for (int i = 0; i < numberItems; i++){
+			if (items[i]->IsInitialized()){
+				items[i]->Destroy();
+			}
+			delete items[i];
+		}
+		delete [] lines;
 	}
 
 	void Shift(Vector2 shiftVec){

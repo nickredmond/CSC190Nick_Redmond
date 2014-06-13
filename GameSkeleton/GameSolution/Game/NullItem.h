@@ -5,7 +5,9 @@
 
 class NullItem : public Item{
 public:
-	NullItem(bool init) : Item(init){}
+	NullItem(bool init) : Item(init){
+		isNullItem = true;
+	}
 
 	virtual void Use(Player& plyr){
 		plyr;
