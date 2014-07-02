@@ -113,6 +113,11 @@ public:
 			const float* matrices,
 			const float* currentTransform,
 			MatrixTransformCallback2D uiChangedCallback);
+	void set3DMatrixCallback(
+		const float* matrices,
+		const float* fulltransform,
+		MatrixTransformCallback3D matrixTransformData3DCallback);
+	void setShowCameraTransform(bool);
 	bool initialize(int argc, char* argv[]);
 	bool shutdown();
 	int run();

@@ -15,4 +15,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EventArgs.h" />
+    <ClInclude Include="LinesForYourReference.h" />
+    <ClInclude Include="RenderUI.h" />
+    <ClInclude Include="TypeDefs.h" />
+  </ItemGroup>
 </Project>
