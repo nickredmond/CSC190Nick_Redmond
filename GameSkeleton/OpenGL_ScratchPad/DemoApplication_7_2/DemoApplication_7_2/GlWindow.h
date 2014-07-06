@@ -7,6 +7,8 @@
 class GlWindow : public QGLWidget
 {
 public:
+	void compileShaders();
+	void sendDataToHardware();
 	void initializeGL();
 	void paintGL();
 };
