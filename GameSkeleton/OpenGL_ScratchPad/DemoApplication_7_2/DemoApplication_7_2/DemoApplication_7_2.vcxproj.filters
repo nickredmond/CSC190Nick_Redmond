@@ -3,6 +3,7 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="GlWindow.cpp" />
+    <ClCompile Include="GlWindow_moc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlWindow.h" />

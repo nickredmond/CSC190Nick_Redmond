@@ -1,5 +1,7 @@
 #include <GlWindow.h>
 #include <Qt\qdebug.h>
+#include <glm\glm.hpp>
+#include <Matrix3.h>
 
 char* vertexShaderCode =
 	"#version 400\r\n"
@@ -7,11 +9,13 @@ char* vertexShaderCode =
 	"in layout(location=0) vec2 position;"
 	"in layout(location=1) vec3 color;"
 	""
+	"uniform mat4 transform;"
+	""
 	"out vec3 deColor;"
 	""
 	"void main()"
 	"{"
-	"	gl_Position = vec4(position, 1, 1);"
+	"	gl_Position = transform * vec4(position, 1, 1);"
 	"	deColor = color;"
 	"}"
 	"";
@@ -27,6 +31,15 @@ char* fragmentShaderCode =
 	"	theFinalColor = deColor;"
 	"}";
 
+GLuint programID;
+glm::vec2 truePosition;
+glm::vec2 velocity;
+float angle;
+
+const float ACCELERATION = 0.0006f;
+const float OMEGA = 0.1f;
+const float TRI_SCALE = 0.1f;
+
 void GlWindow::initializeGL(){
 	glewInit();
 	sendDataToHardware();
@@ -36,10 +49,10 @@ void GlWindow::initializeGL(){
 void GlWindow::sendDataToHardware(){
 	float verts[] = // positional data for vertices
 	{
-		1.0f, -1.0f,
+		1.0f, 0.0f,
 		0.8f, 0.5f, 0.5f,
 
-		0.0f, 1.0f,
+		-1.0f, 1.0f,
 		1.0f, 0.1f, 0.3f,
 
 		-1.0f, -1.0f,
@@ -56,6 +69,9 @@ void GlWindow::sendDataToHardware(){
 
 	glEnableVertexAttribArray(1); // color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
+	timer.start(0);
 }
 
 void GlWindow::compileShaders(){
@@ -84,7 +100,7 @@ void GlWindow::compileShaders(){
 		delete [] buffer;
 	}
 
-	GLuint programID = glCreateProgram();
+	programID = glCreateProgram();
 	glAttachShader(programID, vertexShaderID);
 	glAttachShader(programID, fragShaderID);
 
@@ -93,6 +109,31 @@ void GlWindow::compileShaders(){
 }
 
 void GlWindow::paintGL(){
-	glViewport(0, height() / 2, width() / 2, height() / 2);
+	glm::mat3 transform = Matrix3::Translation(glm::vec3(truePosition, 1)) * Matrix3::Scale(TRI_SCALE) * Matrix3::Rotation(angle) * Matrix3::Translation(glm::vec3(truePosition, 1));
+	glm::mat4 finalTransform = glm::mat4(transform);
+
+	GLint transformLocation = glGetUniformLocation(programID, "transform");
+	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, &finalTransform[0][0]);
+
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, 3); // notify that we're sending triangle data; start at 0, and aim for 3 vertices (per triangle)
+}
+
+void GlWindow::update(){
+	if (GetAsyncKeyState(VK_UP)){
+		velocity += glm::vec2(cos(angle), sin(angle)) * ACCELERATION;
+	}
+	if (GetAsyncKeyState(VK_DOWN)){
+		velocity -= glm::vec2(cos(angle), sin(angle)) * ACCELERATION;
+	}
+	if (GetAsyncKeyState(VK_LEFT)){
+		angle += OMEGA;
+	}
+	if (GetAsyncKeyState(VK_RIGHT)){
+		angle -= OMEGA;
+	}
+
+	truePosition += velocity;
+
+	repaint();
 }
