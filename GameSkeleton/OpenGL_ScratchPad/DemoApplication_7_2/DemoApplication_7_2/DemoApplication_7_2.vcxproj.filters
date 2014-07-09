@@ -7,5 +7,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GlWindow.h" />
+    <ClInclude Include="Player.h" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include <GL\glew.h> // always include glew stuff first
 #include <QtOpenGL\qglwidget>
 #include <Qt\qtimer.h>
+#include <Player.h>
 
 class GlWindow : public QGLWidget
 {
@@ -17,6 +18,8 @@ public:
 	void paintGL();
 private slots:
 	void update();
+	void paintPlayer(Player plyr);
+	glm::vec2 calculateDrag(glm::vec2 velocity);
 };
 
 #endif

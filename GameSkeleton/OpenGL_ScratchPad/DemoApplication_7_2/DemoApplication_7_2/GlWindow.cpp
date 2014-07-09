@@ -10,13 +10,14 @@ char* vertexShaderCode =
 	"in layout(location=1) vec3 color;"
 	""
 	"uniform mat4 transform;"
+	"uniform vec3 dominatingColor;"
 	""
 	"out vec3 deColor;"
 	""
 	"void main()"
 	"{"
 	"	gl_Position = transform * vec4(position, 1, 1);"
-	"	deColor = color;"
+	"	deColor = dominatingColor;"
 	"}"
 	"";
 
@@ -32,15 +33,21 @@ char* fragmentShaderCode =
 	"}";
 
 GLuint programID;
-glm::vec2 truePosition;
-glm::vec2 velocity;
-float angle;
+Player player1, player2;
 
 const float ACCELERATION = 0.0006f;
 const float OMEGA = 0.1f;
 const float TRI_SCALE = 0.1f;
+const float PI = 3.14159265f;
+const float DRAG_COEFF = 0.02f;
 
 void GlWindow::initializeGL(){
+	player1.color = glm::vec3(1, 0, 0);
+	player2.color = glm::vec3(0, 0, 1);
+	player1.position = glm::vec2(-0.5, 0);
+	player2.position = glm::vec2(0.5, 0);
+	player2.angle = PI;
+
 	glewInit();
 	sendDataToHardware();
 	compileShaders();
@@ -69,6 +76,13 @@ void GlWindow::sendDataToHardware(){
 
 	glEnableVertexAttribArray(1); // color attribute
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+
+	GLushort indices[] = {0, 1, 2};
+	GLuint indexBufferID;
+	glGenBuffers(1, &indexBufferID);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferID);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices),
+		indices, GL_STATIC_DRAW);
 
 	connect(&timer, SIGNAL(timeout()), this, SLOT(update()));
 	timer.start(0);
@@ -109,31 +123,69 @@ void GlWindow::compileShaders(){
 }
 
 void GlWindow::paintGL(){
-	glm::mat3 transform = Matrix3::Translation(glm::vec3(truePosition, 1)) * Matrix3::Scale(TRI_SCALE) * Matrix3::Rotation(angle) * Matrix3::Translation(glm::vec3(truePosition, 1));
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	
+	paintPlayer(player1);
+	paintPlayer(player2);
+}
+
+void GlWindow::paintPlayer(Player plyr){
+	glm::mat3 transform = Matrix3::Translation(glm::vec3(plyr.position, 1)) * Matrix3::Scale(TRI_SCALE) * 
+		Matrix3::Rotation(plyr.angle) * Matrix3::Translation(glm::vec3(plyr.position, 1));
 	glm::mat4 finalTransform = glm::mat4(transform);
 
 	GLint transformLocation = glGetUniformLocation(programID, "transform");
 	glUniformMatrix4fv(transformLocation, 1, GL_FALSE, &finalTransform[0][0]);
 
-	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_TRIANGLES, 0, 3); // notify that we're sending triangle data; start at 0, and aim for 3 vertices (per triangle)
+	GLint colorLocation = glGetUniformLocation(programID, "dominatingColor");
+	glUniform3f(colorLocation, plyr.color.r, plyr.color.g, plyr.color.b);
+
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, 0);
+}
+
+glm::vec2 GlWindow::calculateDrag(glm::vec2 velocity){
+	glm::vec2 drag = glm::vec2(-velocity.x, -velocity.y) * DRAG_COEFF;
+
+	return drag;
 }
 
 void GlWindow::update(){
-	if (GetAsyncKeyState(VK_UP)){
-		velocity += glm::vec2(cos(angle), sin(angle)) * ACCELERATION;
+	if (GetAsyncKeyState('W')){
+		player1.velocity += glm::vec2(cos(player1.angle), sin(player1.angle)) * ACCELERATION;
 	}
-	if (GetAsyncKeyState(VK_DOWN)){
-		velocity -= glm::vec2(cos(angle), sin(angle)) * ACCELERATION;
+	else if (GetAsyncKeyState('S')){
+		player1.velocity -= glm::vec2(cos(player1.angle), sin(player1.angle)) * ACCELERATION;
 	}
-	if (GetAsyncKeyState(VK_LEFT)){
-		angle += OMEGA;
-	}
-	if (GetAsyncKeyState(VK_RIGHT)){
-		angle -= OMEGA;
+	else if (player1.velocity.length() > 0.0001f){
+		player1.velocity += calculateDrag(player1.velocity);
 	}
 
-	truePosition += velocity;
+	if (GetAsyncKeyState('A')){
+		player1.angle += OMEGA;
+	}
+	if (GetAsyncKeyState('D')){
+		player1.angle -= OMEGA;
+	}
+
+	if (GetAsyncKeyState(VK_UP)){
+		player2.velocity += glm::vec2(cos(player2.angle), sin(player2.angle)) * ACCELERATION;
+	}
+	else if (GetAsyncKeyState(VK_DOWN)){
+		player2.velocity -= glm::vec2(cos(player2.angle), sin(player2.angle)) * ACCELERATION;
+	}
+	else if (player2.velocity.length() > 0.0001f){
+		player2.velocity += calculateDrag(player2.velocity);
+	}
+
+	if (GetAsyncKeyState(VK_LEFT)){
+		player2.angle += OMEGA;
+	}
+	if (GetAsyncKeyState(VK_RIGHT)){
+		player2.angle -= OMEGA;
+	}
+
+	player1.position += player1.velocity;
+	player2.position += player2.velocity;
 
 	repaint();
 }
